@@ -64,7 +64,7 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 .grp-sub-qty{font-size:11px;color:var(--sub);}
 .grp-sub-val{font-size:14px;font-weight:900;color:var(--green-dk);white-space:nowrap;}
 .grp-sub-val.blue{color:#2d60d4;}
-.grp-del-btn{background:none;border:none;color:#ccc;cursor:pointer;font-size:14px;padding:3px 5px;border-radius:5px;transition:.12s;flex-shrink:0;}
+.grp-del-btn{background:none;border:none;color:#ccc;cursor:pointer;font-size:18px;padding:4px 6px;border-radius:6px;transition:.12s;flex-shrink:0;width:34px;height:34px;display:flex;align-items:center;justify-content:center;}
 .grp-del-btn:hover{background:#fff0f3;color:var(--red);}
 .grp-body{padding:10px 12px 6px;}
 
@@ -139,9 +139,9 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 .ms{cursor:pointer;}
 .mi.num{text-align:right;font-weight:700;}
 .mat-result-cell{text-align:right;font-size:13px;font-weight:700;color:var(--green-dk);white-space:nowrap;}
-.del-btn{background:none;border:none;color:#ccc;cursor:pointer;font-size:15px;padding:3px 4px;border-radius:5px;transition:.12s;width:28px;text-align:center;flex-shrink:0;}
+.del-btn{background:none;border:none;color:#ccc;cursor:pointer;font-size:18px;padding:4px 6px;border-radius:6px;transition:.12s;width:34px;height:34px;text-align:center;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
 .del-btn:hover{background:#fff0f3;color:var(--red);}
-.dup-btn{background:none;border:none;color:#b0bec5;cursor:pointer;font-size:15px;padding:3px 4px;border-radius:5px;transition:.12s;width:28px;text-align:center;flex-shrink:0;}
+.dup-btn{background:none;border:none;color:#b0bec5;cursor:pointer;font-size:18px;padding:4px 6px;border-radius:6px;transition:.12s;width:34px;height:34px;text-align:center;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
 .dup-btn:hover{background:#e8f4fd;color:#4a80f0;}
 
 /* 加工行 内部部品 */
@@ -248,10 +248,14 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
   /* ─── 素材行line0：メーカー＋品番＋ボタン ─── */
   .mat-row-line0{gap:5px;}
   .mat-row .mr-maker{width:38%;font-size:13px;padding:7px 6px;}
-  .mat-row .mr-code{width:calc(62% - 60px);flex-shrink:1;}
+  .mat-row .mr-code{width:calc(62% - 82px);flex-shrink:1;}
   .mat-row .mr-code .mi{font-size:14px;padding:7px 8px;}
   .mat-row .mr-btns{flex-shrink:0;}
-  .mat-row-line0 .maker-custom-input{width:calc(62% - 60px) !important;font-size:13px;padding:7px 6px;}
+
+  /* 複製・削除ボタン：スマホでタップしやすく */
+  .del-btn,.dup-btn{font-size:20px;width:38px;height:38px;border-radius:8px;}
+  .grp-del-btn{font-size:20px;width:38px;height:38px;border-radius:8px;}
+  .mat-row-line0 .maker-custom-input{width:calc(62% - 82px) !important;font-size:13px;padding:7px 6px;}
 
   /* ─── 素材行line0b：カラー＋サイズ ─── */
   .mat-row-line0b{gap:5px;}
@@ -875,7 +879,7 @@ function renderMatRow(gId,r){
       <select class="ms mr-maker" onchange="uMatRow(${gId},${r.id},'maker',this.value)">${makerOpts}</select>
       ${isCarryover?`<input id="fi-makercustom-${r.id}" class="maker-custom-input" type="text" placeholder="メーカー名" value="${esc(r.makerCustom||'')}" oninput="uMatRow(${gId},${r.id},'makerCustom',this.value)">`:``}
       <div class="mr-code">
-        <input id="fi-code-${r.id}" class="mi" type="text" placeholder="品番" value="${esc(r.code)}" oninput="uMatRow(${gId},${r.id},'code',this.value)" onblur="lookupPrice(${gId},${r.id})" style="font-weight:600;">
+        <input id="fi-code-${r.id}" class="mi" type="text" inputmode="url" autocapitalize="characters" placeholder="品番" value="${esc(r.code)}" oninput="uMatRow(${gId},${r.id},'code',this.value)" onblur="lookupPrice(${gId},${r.id})" style="font-weight:600;">
       </div>
       <div class="mr-btns">
         <button class="dup-btn" title="この行を複製" onclick="dupMatRow(${gId},${r.id})">⧉</button>
