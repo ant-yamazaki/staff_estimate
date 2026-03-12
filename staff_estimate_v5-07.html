@@ -52,10 +52,10 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 .sec-body{padding:12px 16px;}
 
 /* ─── 共通グループカード ─── */
-.grp{border:2px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;transition:.15s;}
+.grp{border:2px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:visible;transition:.15s;}
 .grp:focus-within{border-color:rgba(64,223,171,.4);}
 .grp.proc-grp:focus-within{border-color:rgba(74,128,240,.4);}
-.grp-hdr{display:flex;align-items:center;gap:8px;padding:9px 12px;background:linear-gradient(135deg,#f4f6f9,#eef0f4);border-bottom:1px solid var(--border);}
+.grp-hdr{display:flex;align-items:center;gap:8px;padding:9px 12px;background:linear-gradient(135deg,#f4f6f9,#eef0f4);border-bottom:1px solid var(--border);border-radius:10px 10px 0 0;}
 .grp-num{width:22px;height:22px;border-radius:6px;background:var(--green);color:#fff;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .grp-num.blue{background:var(--blue);}
 .grp-subtotal{margin-left:auto;display:flex;align-items:center;gap:6px;}
@@ -76,7 +76,7 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 
 /* ─── 加工グループ固有 ─── */
 .proc-method-wrap{display:flex;align-items:center;gap:8px;flex:1;flex-wrap:wrap;}
-.proc-method-sel{border:1.5px solid #c5d0e0;border-radius:7px;padding:4px 10px;font-size:13px;font-weight:700;font-family:inherit;outline:none;background:#fff;cursor:pointer;min-width:170px;transition:.15s;}
+.proc-method-sel{border:1.5px solid #c5d0e0;border-radius:7px;padding:4px 10px;font-size:13px;font-weight:700;font-family:inherit;outline:none;background:#fff;cursor:pointer;min-width:170px;max-width:100%;transition:.15s;}
 .proc-method-sel:focus{border-color:var(--blue);}
 .proc-method-badge{font-size:11px;color:rgba(255,255,255,.9);background:var(--blue);border-radius:5px;padding:2px 8px;font-weight:700;}
 
@@ -89,11 +89,16 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 .mat-row:focus-within{border-color:rgba(64,223,171,.5);background:var(--green-bg);}
 .mat-row.has-val{border-color:rgba(64,223,171,.3);background:var(--green-bg);}
 .mat-row-line0{display:flex;align-items:center;gap:6px;margin-bottom:6px;}
-.mat-row-line0 select.ms{width:25%;flex-shrink:0;}
-.mat-row-line0 .maker-custom-input{width:30%;flex-shrink:0;font-size:12px;padding:4px 8px;border:1px solid #d1d5db;border-radius:6px;outline:none;}
+.mat-row-line0 select.ms{width:22%;flex-shrink:0;}
+.mat-row-line0 .maker-custom-input{width:18%;flex-shrink:0;font-size:12px;padding:5px 6px;border:1.5px solid var(--border);border-radius:7px;outline:none;font-family:inherit;background:#fff;}
 .mat-row-line0 .maker-custom-input:focus{border-color:var(--green);}
 .mat-row-line0 .mi{flex:1;}
-.mat-row-line1{display:grid;grid-template-columns:156px 68px 86px 78px 86px;gap:5px;align-items:center;}
+.color-detail-wrap{display:flex;gap:4px;align-items:center;}
+.color-detail-input{font-size:12px;padding:5px 6px;border:1.5px solid var(--border);border-radius:7px;outline:none;background:#fff;transition:.15s;flex:1;min-width:0;}
+.color-detail-input:focus{border-color:var(--green);}
+.color-detail-input::placeholder{color:#aaa;}
+.color-group-tag{font-size:11px;color:#fff;background:var(--green);border-radius:5px;padding:3px 9px;white-space:nowrap;flex-shrink:0;font-weight:600;}
+.mat-row-line1{display:flex;gap:6px;align-items:center;justify-content:flex-start;margin-top:6px;}
 .mat-row-line2{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding-top:5px;margin-top:5px;border-top:1px solid #eef0f3;}
 .mat-row-line2 .retail2{font-size:12px;color:var(--sub);white-space:nowrap;}
 .mat-row-line2 .cost2{font-size:15px;font-weight:800;color:var(--green-dk);white-space:nowrap;}
@@ -167,8 +172,9 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 }
 .sum-footer-inner{
   max-width:1080px;margin:0 auto;padding:24px 24px 24px;
-  display:grid;grid-template-columns:1fr auto 1fr;align-items:start;gap:16px;
+  display:grid;grid-template-columns:1fr auto 1fr;grid-template-rows:auto auto;align-items:start;gap:16px;
 }
+.sum-footer-actions{display:flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;flex-shrink:0;grid-column:1/-1;margin-top:4px;}
 .sum-rows{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
 .sum-col-left{display:flex;flex-direction:column;gap:4px;}
 .sum-col-center{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:320px;}
@@ -186,7 +192,6 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 .sr.grand .sv{color:var(--green);font-size:32px;font-weight:900;letter-spacing:-1px;}
 .sr.grand .su{color:rgba(255,255,255,.5);font-size:12px;font-weight:600;margin-left:2px;}
 .unit-note{color:rgba(255,255,255,.3);font-size:10px;white-space:nowrap;}
-.sum-footer-actions{display:flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;flex-shrink:0;}
 /* ページ下部にフッター分の余白 */
 .wrap{padding-bottom:160px;}
 .export-btn{display:flex;align-items:center;gap:5px;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;transition:.15s;font-family:inherit;white-space:nowrap;}
@@ -197,6 +202,51 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 .export-btn.reset{background:rgba(255,77,109,.15);color:#ff8099;border:1px solid rgba(255,77,109,.25);}
 .export-btn.reset:hover{background:rgba(255,77,109,.28);}
 .export-btn:disabled{opacity:.5;cursor:not-allowed;}
+
+/* 価格検索ポップアップ */
+.price-popup{position:absolute;z-index:300;background:#fff;border:1.5px solid var(--green);border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.15);padding:10px;left:0;min-width:320px;box-sizing:border-box;top:calc(100% + 2px);}
+.price-popup-title{font-size:11px;color:var(--sub);margin-bottom:6px;line-height:1.4;padding-right:16px;word-break:break-all;}
+.price-popup-list{display:flex;flex-direction:column;gap:4px;max-height:180px;overflow-y:auto;}
+.price-popup-item{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;border-radius:6px;border:1.5px solid var(--border);cursor:pointer;transition:.15s;gap:8px;}
+.price-popup-item:hover{border-color:var(--green);background:#f0faf5;}
+.price-popup-item .pi-label{font-size:12px;color:#333;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.price-popup-item .pi-price{font-size:13px;font-weight:800;color:var(--green-dk);white-space:nowrap;flex-shrink:0;}
+.price-popup-close{position:absolute;top:6px;right:8px;font-size:16px;color:var(--sub);cursor:pointer;line-height:1;}
+.price-popup-wrap{position:relative;flex:1;min-width:0;}
+@media(max-width:640px){
+  .sum-footer-inner{
+    grid-template-columns:1fr;padding:14px 16px 14px;gap:10px;
+  }
+  .sum-col-left{flex-direction:row;flex-wrap:wrap;gap:8px 14px;order:1;}
+  .sum-col-center{min-width:unset;order:2;}
+  .sum-col-right{flex-direction:row;flex-wrap:wrap;gap:8px 14px;align-items:flex-start;order:3;}
+  .sum-footer-actions{order:4;}
+  .sr.grand .sv{font-size:26px;}
+  .export-btn{padding:6px 10px;font-size:11px;}
+
+  /* 素材行：スマホ */
+  .mat-row-line0{flex-wrap:wrap;}
+  .mat-row-line0 select.ms{width:40%;}
+  .mat-row-line1{flex-wrap:wrap;}
+
+  /* 加工行：スマホ */
+  .proc-line-top{flex-wrap:wrap;}
+  .proc-line-top .pl-sel{min-width:60px;}
+  .proc-line-bottom .detail2b{white-space:normal;font-size:11px;}
+  .proc-line-bottom .cost2b{font-size:13px;}
+
+  /* 加工・グッズ カテゴリーセレクト */
+  .proc-method-sel{min-width:unset;width:100%;box-sizing:border-box;}
+  .proc-method-sel.goods{min-width:unset;width:100%;}
+
+  /* フッターボタン */
+  .sum-footer-actions{flex-wrap:wrap;gap:6px;}
+  .export-btn{flex:1;justify-content:center;min-width:80px;}
+
+  /* グループヘッダー */
+  .mat-grp-hdr{flex-wrap:wrap;gap:4px;}
+  .proc-grp-hdr{flex-wrap:wrap;gap:4px;}
+}
 
 /* ─── オプションパネル ─── */
 .opt-panel{border:1.5px solid #f0d898;border-radius:10px;margin-bottom:10px;overflow:hidden;}
@@ -411,13 +461,13 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
     <div class="sum-col-center">
       <div id="sumGrand"></div>
       <div id="unitNote" style="color:rgba(255,255,255,.35);font-size:11px;"></div>
-      <div class="sum-footer-actions" style="margin-top:10px;">
-        <button class="export-btn copy" id="copyBtn" onclick="copyToClipboard()">📋 テキストをコピー</button>
-        <button class="export-btn img" id="imgBtn" onclick="saveAsImage()">🖼 画像で保存</button>
-        <button class="export-btn reset" onclick="resetAll()">↺ 全リセット</button>
-      </div>
     </div>
     <div class="sum-col-right" id="sumColRight"></div>
+    <div class="sum-footer-actions" style="margin-top:10px;">
+      <button class="export-btn copy" id="copyBtn" onclick="copyToClipboard()">📋 テキストをコピー</button>
+      <button class="export-btn img" id="imgBtn" onclick="saveAsImage()">🖼 画像で保存</button>
+      <button class="export-btn reset" onclick="resetAll()">↺ 全リセット</button>
+    </div>
   </div>
 </div>
 
@@ -464,14 +514,13 @@ const PROC_METHODS=[
   {v:'rubber_full',  l:'プリントラバー転写'},
   {v:'manual',       l:'手入力（刺繍など）'},
 ];
-const MAKERS=[{v:'UA',l:'UnitedAthle'},{v:'PS',l:'Printstar'},{v:'GL',l:'glimmer'},{v:'TR',l:'TRUSS'},{v:'CS',l:'CROSS&STITCH'},{v:'WD',l:'wundow'},{v:'OTHER',l:'その他'},{v:'CARRYOVER',l:'持ち込みアイテム'}];
+const PRICE_DB={"UA":{"1100-01":{"name":"6.5オンス ファインジャージー Tシャツ","prices":[{"retail":1760,"size":"XS ～ XL","color":"ホワイト"},{"retail":1870,"size":"XS ～ XL","color":"カラー"},{"retail":2240,"size":"XXL","color":"ホワイト"},{"retail":2460,"size":"XXL","color":"カラー"}]},"1105-01":{"name":"5.6オンス トライブレンド ビッグシルエット Tシャツ","prices":[{"retail":2860,"size":"M ～ XL"}]},"1108-01":{"name":"6.5オンス ファインジャージー ボックスシルエット Tシャツ","prices":[{"retail":2050,"size":"S ～ XL"}]},"1110-01":{"name":"6.5オンス ファインジャージー リラックスフィット Tシャツ（裾ドローコード）","prices":[{"retail":2340,"size":"M ～ XL"}]},"1111-01":{"name":"6.5オンス ファインジャージー ロングスリーブ Tシャツ（2.1インチリブ）","prices":[{"retail":2930,"size":"S ～ XL","color":"ホワイト"},{"retail":3200,"size":"S ～ XL","color":"カラー"},{"retail":3720,"size":"XXL","color":"ホワイト"},{"retail":4170,"size":"XXL","color":"カラー"}]},"1384-01":{"name":"ウォッシュ キャンバス＆ツイル エプロン（クロスタイプ）","prices":[{"retail":5360,"size":"F"}]},"1406-01":{"name":"デイリー フラット トートバッグ","prices":[{"retail":470,"size":"S","color":"ナチュラル"},{"retail":580,"size":"S","color":"ホワイト・カラー"},{"retail":570,"size":"M","color":"ナチュラル"},{"retail":680,"size":"M","color":"ホワイト・カラー"},{"retail":700,"size":"L","color":"ナチュラル"},{"retail":820,"size":"L","color":"ホワイト・カラー"}]},"1418-01":{"name":"ライトナイロン リップストップ メッシュ トートバッグ","prices":[{"retail":2080,"size":"F"}]},"1419-01":{"name":"ライトナイロン リップストップ ジムサック","prices":[{"retail":1930,"size":"F"}]},"1420-01":{"name":"ライトナイロン リップストップ サコッシュ","prices":[{"retail":1320,"size":"F"}]},"1422-01":{"name":"ライトナイロン リップストップ トートバッグ","prices":[{"retail":1600,"size":"M"},{"retail":1900,"size":"W"}]},"1423-01":{"name":"ライトナイロン リップストップ マルシェバッグ（パッカブル）","prices":[{"retail":1700,"size":"S"},{"retail":2100,"size":"M"}]},"1460-01":{"name":"レギュラー キャンバス トートバッグ","prices":[{"retail":500,"size":"S","color":"ナチュラル"},{"retail":580,"size":"S","color":"カラー"},{"retail":680,"size":"S","color":"配色"},{"retail":580,"size":"M","color":"ナチュラル"},{"retail":690,"size":"M","color":"カラー"},{"retail":820,"size":"M","color":"配色"},{"retail":800,"size":"L","color":"ナチュラル"},{"retail":950,"size":"L","color":"カラー"},{"retail":1120,"size":"L","color":"配色"},{"retail":800,"size":"W","color":"ナチュラル"},{"retail":950,"size":"W","color":"カラー"}]},"1461-01":{"name":"レギュラー キャンバス サコッシュ","prices":[{"retail":720,"size":"F","color":"ナチュラル"},{"retail":870,"size":"F","color":"カラー"}]},"1464-01":{"name":"レギュラー キャンバス 2WAY トートバッグ","prices":[{"retail":1750,"size":"F","color":"ナチュラル"},{"retail":2100,"size":"F","color":"カラー"}]},"1490-01":{"name":"ヘヴィー キャンバス スイッチング トートバッグ","prices":[{"retail":2900,"size":"F"}]},"1508-01":{"name":"ヘヴィー キャンバス トートバッグ（中）","prices":[{"retail":2130,"size":"F"}]},"1515-01":{"name":"ヘヴィー キャンバス ジップトートバッグ","prices":[{"retail":4330,"size":"F"}]},"1518-01":{"name":"ヘヴィー キャンバス トートバッグ（大）","prices":[{"retail":1990,"size":"F"}]},"1522-01":{"name":"ヘヴィー キャンバス ニュースペーパーバッグ","prices":[{"retail":3700,"size":"F"}]},"1543-01":{"name":"ヘヴィー キャンバス ランチバッグ","prices":[{"retail":1330,"size":"F"}]},"1693-01":{"name":"コットン オープンカラー ショートスリーブ シャツ","prices":[{"retail":5650,"size":"M ～ XL"}]},"1759-01":{"name":"T/C オープンカラー ショートスリーブ シャツ","prices":[{"retail":4970,"size":"S ～ XL"},{"retail":5500,"size":"XXL"}]},"1772-01":{"name":"T/C ワーク ショートスリーブ シャツ","prices":[{"retail":4970,"size":"S ～ XL"},{"retail":5500,"size":"XXL"}]},"1880-01":{"name":"ナイロン イージー ショーツ","prices":[{"retail":4600,"size":"S ～ XL"}]},"1901-01":{"name":"7.0オンス スムース ラグランスリーブ トラック ジャケット","prices":[{"retail":6900,"size":"S ～ XL"}]},"1902-01":{"name":"7.0オンス スムース トラック パンツ","prices":[{"retail":5500,"size":"S ～ XL"}]},"2020-01":{"name":"4.7オンス スペシャル ドライ カノコ ポロシャツ（ローブリード）","prices":[{"retail":1790,"size":"XS ～ XL"},{"retail":2260,"size":"XXL ～ XXXXL"},{"retail":2490,"size":"5XL"}]},"2021-01":{"name":"4.7オンス スペシャル ドライ カノコ ポロシャツ（ポケット付）（ローブリード）","prices":[{"retail":1960,"size":"XS ～ XL"},{"retail":2420,"size":"XXL ～ XXXXL"},{"retail":2640,"size":"5XL"}]},"2022-01":{"name":"4.7オンス スペシャル ドライ カノコ ポロシャツ（ボタンダウン）（ローブリード）","prices":[{"retail":2140,"size":"XS ～ XL"},{"retail":2610,"size":"XXL ～ XXXXL"},{"retail":2850,"size":"5XL"}]},"2023-01":{"name":"4.7オンス スペシャル ドライ カノコ ポロシャツ（ボタンダウン）（ポケット付）（ローブリード）","prices":[{"retail":2260,"size":"XS ～ XL"},{"retail":2730,"size":"XXL ～ XXXXL"},{"retail":2970,"size":"5XL"}]},"2024-01":{"name":"4.7オンス スペシャル ドライ カノコ ロングスリーブ ポロシャツ（ポケット付）（ローブリード）","prices":[{"retail":2420,"size":"S ～ XL"},{"retail":2900,"size":"XXL"}]},"4230-01":{"name":"6.2オンス オープンエンド フェードウォッシュ Tシャツ","prices":[{"retail":2700,"size":"S ～ XXL"}]},"4252-01":{"name":"オーセンティック スーパーヘヴィーウェイト 7.1オンス Tシャツ","prices":[{"retail":2680,"size":"XS ～ XL","color":"ホワイト"},{"retail":2880,"size":"XS ～ XL","color":"カラー"},{"retail":3100,"size":"XXL","color":"ホワイト"},{"retail":3370,"size":"XXL","color":"カラー"}]},"4277-01":{"name":"7.1オンス オープンエンド ラギッド Tシャツ","prices":[{"retail":2690,"size":"S ～ XXL","color":"ホワイト"},{"retail":2900,"size":"S ～ XXL","color":"カラー"},{"retail":3080,"size":"S ～ XXL","color":"アッシュ"}]},"4288-01":{"name":"7.1オンス オープンエンド ラギッド ロングスリーブ Tシャツ（2.1インチリブ）","prices":[{"retail":3150,"size":"M ～ XXL","color":"ホワイト"},{"retail":3500,"size":"M ～ XXL","color":"カラー"},{"retail":3700,"size":"M ～ XXL","color":"アッシュ"}]},"4411-01":{"name":"9.1オンス マグナムウェイト ビッグシルエット Tシャツ","prices":[{"retail":2700,"size":"M ～ XL"}]},"4422-01":{"name":"9.1オンス マグナムウェイト ビッグシルエット ロングスリーブ Tシャツ（2.1インチリブ）","prices":[{"retail":4100,"size":"M ～ XL"}]},"4487-01":{"name":"10.0オンス コットン ジャージー コーチ ジャケット（一重）","prices":[{"retail":7500,"size":"M ～ XL"}]},"4488-01":{"name":"10.0オンス コットン ジャージー ルーズフィット カーディガン","prices":[{"retail":5500,"size":"M ～ XL"}]},"4500-01":{"name":"6.0オンス オーセンティック オープンエンド ヘヴィーウェイト Tシャツ","prices":[{"retail":1600,"size":"S ～ XL","color":"ホワイト"},{"retail":1850,"size":"S ～ XL","color":"カラー"},{"retail":2050,"size":"XXL","color":"ホワイト"},{"retail":2350,"size":"XXL","color":"カラー"}]},"4982-01":{"name":"8.5オンス コットン ジャージー ベースボールシャツ","prices":[{"retail":4500,"size":"M ～ XL"}]},"5001-01":{"name":"5.6オンス ハイクオリティー Tシャツ 〈アダルト〉","prices":[{"retail":1260,"size":"S ～ XL","color":"ホワイト"},{"retail":1360,"size":"S ～ XL","color":"カラー"},{"retail":1580,"size":"XXL","color":"ホワイト"},{"retail":1790,"size":"XXL","color":"カラー"},{"retail":1820,"size":"XXXL","color":"ホワイト"},{"retail":2020,"size":"XXXL","color":"カラー"}]},"5001-02":{"name":"5.6オンス ハイクオリティー Tシャツ 〈90～160cm〉","prices":[{"retail":1150,"size":"90 ～ 160cm","color":"ホワイト"},{"retail":1240,"size":"90 ～ 160cm","color":"カラー"}]},"5001-03":{"name":"5.6オンス ハイクオリティー Tシャツ 〈ガールズ〉","prices":[{"retail":1260,"size":"G-M･G-L","color":"ホワイト"},{"retail":1360,"size":"G-M･G-L","color":"カラー"}]},"5001-05":{"name":"5.6オンス ハイクオリティー Tシャツ（ティア アウェイ タグ）","prices":[{"retail":1260,"size":"S ～ XL","color":"ホワイト"},{"retail":1360,"size":"S ～ XL","color":"カラー"},{"retail":1580,"size":"XXL","color":"ホワイト"},{"retail":1790,"size":"XXL","color":"カラー"}]},"5001-07":{"name":"5.6オンス P.F.D. ハイクオリティー Tシャツ","prices":[{"retail":1360,"size":"S ～ XL"},{"retail":1790,"size":"XXL"}]},"5004-01":{"name":"5.6オンス ヘンリーネック Tシャツ","prices":[{"retail":2930,"size":"S ～ XL"}]},"5006-01":{"name":"5.6オンス ハイクオリティー Tシャツ（ポケット付）","prices":[{"retail":1990,"size":"XS ～ XL"}]},"5007-01":{"name":"5.6オンス イージータンクトップ","prices":[{"retail":2120,"size":"M ～ XL"}]},"5010-01":{"name":"5.6オンス ロングスリーブ Tシャツ","prices":[{"retail":1750,"size":"S ～ XL","color":"ホワイト"},{"retail":1980,"size":"S ～ XL","color":"カラー"},{"retail":2080,"size":"XXL","color":"ホワイト"},{"retail":2370,"size":"XXL","color":"カラー"}]},"5011-01":{"name":"5.6オンス ロングスリーブ Tシャツ（1.6インチリブ）","prices":[{"retail":1980,"size":"XS ～ XL","color":"ホワイト"},{"retail":2200,"size":"XS ～ XL","color":"カラー"},{"retail":2320,"size":"XXL","color":"ホワイト"},{"retail":2600,"size":"XXL","color":"カラー"}]},"5017-01":{"name":"10.0オンス スウェット パンツ（裏パイル）〈アダルト〉","prices":[{"retail":4950,"size":"S ～ XL"},{"retail":5990,"size":"XXL"}]},"5017-02":{"name":"10.0オンス スウェット パンツ（裏パイル）〈130･150cm〉","prices":[{"retail":4470,"size":"130・150cm"}]},"5041-01":{"name":"5.6オンス ラグランスリーブ Tシャツ","prices":[{"retail":2390,"size":"S ～ XL"}]},"5044-01":{"name":"10.0オンス クルーネック スウェット（裏パイル）〈アダルト〉","prices":[{"retail":3680,"size":"S ～ XL","color":"ホワイト・カラー"},{"retail":5150,"size":"S ～ XL","color":"アッシュ"},{"retail":4410,"size":"XXL","color":"ホワイト・カラー"},{"retail":5670,"size":"XXL","color":"アッシュ"},{"retail":4710,"size":"XXXL","color":"ホワイト・カラー"}]},"5044-02":{"name":"10.0オンス クルーネック スウェット（裏パイル）〈110･130･150cm〉","prices":[{"retail":3260,"size":"110・130・150cm"}]},"5045-01":{"name":"5.6オンス ラグラン 3/4スリーブ Tシャツ","prices":[{"retail":1820,"size":"S ～ XL"}]},"5048-01":{"name":"5.6オンス ラグラン ロングスリーブ Tシャツ（1.6インチリブ）","prices":[{"retail":2930,"size":"M ～ XL"}]},"5050-01":{"name":"5.3オンス ドライカノコ ユーティリティー ポロシャツ","prices":[{"retail":2490,"size":"XS ～ XL"},{"retail":2780,"size":"XXL"},{"retail":3210,"size":"XXXL"},{"retail":3660,"size":"XXXXL"}]},"5088-01":{"name":"4.7オンス ドライシルキータッチ Tシャツ（ローブリード）","prices":[{"retail":1250,"size":"S ～ XL"},{"retail":1660,"size":"XXL"},{"retail":1940,"size":"XXXL"}]},"5089-01":{"name":"4.7オンス ドライシルキータッチ ロングスリーブ Tシャツ（ローブリード）","prices":[{"retail":1760,"size":"S ～ XL"},{"retail":2230,"size":"XXL"}]},"5099-01":{"name":"5.6オンス C/N ドライ クールタッチ Tシャツ","prices":[{"retail":2110,"size":"S ～ XXL"}]},"5117-01":{"name":"8.2オンス オーガニックコットン Tシャツ","prices":[{"retail":2850,"size":"M ～ XL","color":"ホワイト"},{"retail":3210,"size":"M ～ XL","color":"カラー"},{"retail":3420,"size":"XXL","color":"ホワイト"},{"retail":3620,"size":"XXL","color":"カラー"}]},"5157-02":{"name":"10.0オンス スウェット スタイ（裏パイル）","prices":[{"retail":1100,"size":"F"}]},"5158-02":{"name":"5.6オンス ベビー カバーオール","prices":[{"retail":2600,"size":"70・80cm"}]},"5198-01":{"name":"8.2オンス ショートスリーブ スウェット（裏パイル）","prices":[{"retail":3300,"size":"S ～ XL"}]},"5199-01":{"name":"8.2オンス スウェット ショーツ（裏パイル）","prices":[{"retail":4200,"size":"S ～ XL"}]},"5213-01":{"name":"10.0オンス スウェット フルジップ パーカ（裏パイル）〈アダルト〉","prices":[{"retail":5500,"size":"S ～ XL"},{"retail":6580,"size":"XXL"},{"retail":7080,"size":"XXXL"}]},"5213-02":{"name":"10.0オンス スウェット フルジップ パーカ（裏パイル）〈110･130･150cm〉","prices":[{"retail":5140,"size":"110・130・150cm"}]},"5214-01":{"name":"10.0オンス スウェット プルオーバー パーカ（裏パイル）〈アダルト〉","prices":[{"retail":4950,"size":"S ～ XL","color":"ホワイト・カラー"},{"retail":6730,"size":"S ～ XL","color":"アッシュ"},{"retail":5980,"size":"XXL","color":"ホワイト・カラー"},{"retail":7450,"size":"XXL","color":"アッシュ"},{"retail":6340,"size":"XXXL","color":"ホワイト・カラー"}]},"5214-02":{"name":"10.0オンス スウェット プルオーバー パーカ（裏パイル）〈110･130･150cm〉","prices":[{"retail":4530,"size":"110・130・150cm"}]},"5217-01":{"name":"10.0オンス スウェット パンツ（裏パイル）（裾シャーリング）","prices":[{"retail":5050,"size":"M ～ XL"},{"retail":6300,"size":"XXL"}]},"5242-01":{"name":"10.0オンス ラグランスリーブ クルーネック スウェット（裏パイル）","prices":[{"retail":3900,"size":"M ～ XL"},{"retail":4900,"size":"XXL"}]},"5300-01":{"name":"4.7オンス レギュラー フィット Tシャツ","prices":[{"retail":1130,"size":"XS ～ XL","color":"ホワイト"},{"retail":1230,"size":"XS ～ XL","color":"カラー"},{"retail":1420,"size":"XXL","color":"ホワイト"},{"retail":1590,"size":"XXL","color":"カラー"}]},"5397-01":{"name":"8.8オンス オーセンティック パイル スウェット フルジップ パーカ（裏パイル）","prices":[{"retail":4540,"size":"S ～ XL","color":"ホワイト・カラー"},{"retail":5220,"size":"S ～ XL","color":"アッシュ"},{"retail":5140,"size":"XXL","color":"ホワイト・カラー"},{"retail":5910,"size":"XXL","color":"アッシュ"}]},"5398-01":{"name":"8.8オンス オーセンティック パイル スウェット プルオーバー パーカ（裏パイル）","prices":[{"retail":3870,"size":"S ～ XL","color":"ホワイト・カラー"},{"retail":4570,"size":"S ～ XL","color":"アッシュ"},{"retail":4370,"size":"XXL","color":"ホワイト・カラー"},{"retail":5160,"size":"XXL","color":"アッシュ"}]},"5399-01":{"name":"8.8オンス オーセンティック パイル クルーネック スウェット（裏パイル）","prices":[{"retail":2870,"size":"S ～ XL","color":"ホワイト・カラー"},{"retail":3470,"size":"S ～ XL","color":"アッシュ"},{"retail":3370,"size":"XXL","color":"ホワイト・カラー"},{"retail":4060,"size":"XXL","color":"アッシュ"}]},"5494-04":{"name":"6.2オンス CVC フライス Tシャツ","prices":[{"retail":1760,"size":"S ～ XL"}]},"5508-01":{"name":"5.6オンス ビッグシルエット Tシャツ","prices":[{"retail":2050,"size":"S ～ XL"},{"retail":2500,"size":"XXL"}]},"5509-01":{"name":"5.6オンス ビッグシルエット ロングスリーブ Tシャツ（1.8インチリブ）","prices":[{"retail":2470,"size":"S ～ XL"}]},"5560-01":{"name":"6.0オンス ヘヴィーウェイト コットン ファイン カノコ ポロシャツ","prices":[{"retail":2800,"size":"S ～ XL"},{"retail":3000,"size":"XXL"}]},"5618-01":{"name":"10.0オンス T/C スウェット プルオーバー パーカ（裏起毛）","prices":[{"retail":4950,"size":"S ～ XL","color":"ホワイト・カラー"},{"retail":5310,"size":"S ～ XL","color":"アッシュ"},{"retail":5980,"size":"XXL","color":"ホワイト・カラー"},{"retail":6410,"size":"XXL","color":"アッシュ"},{"retail":6340,"size":"XXXL","color":"ホワイト・カラー"}]},"5620-01":{"name":"10.0オンス T/C スウェット フルジップ パーカ（裏起毛）","prices":[{"retail":5500,"size":"S ～ XL","color":"ホワイト・カラー"},{"retail":5980,"size":"S ～ XL","color":"アッシュ"},{"retail":6580,"size":"XXL","color":"ホワイト・カラー"},{"retail":7130,"size":"XXL","color":"アッシュ"},{"retail":7080,"size":"XXXL","color":"ホワイト・カラー"}]},"5624-01":{"name":"10.0オンス T/C スウェット パンツ（裏起毛）","prices":[{"retail":4950,"size":"S ～ XL"},{"retail":5990,"size":"XXL"}]},"5700-01":{"name":"4.4オンス ドライスムース リサイクルポリエステル Tシャツ","prices":[{"retail":990,"size":"XS ～ XL"},{"retail":1200,"size":"XXL ～ XXXXL"}]},"5702-01":{"name":"4.4オンス ドライスムース リサイクルポリエステル ショーツ","prices":[{"retail":1800,"size":"S ～ XL"},{"retail":1980,"size":"XXL"}]},"5703-01":{"name":"4.4オンス ドライスムース リサイクルポリエステル スリーブレスシャツ","prices":[{"retail":1200,"size":"S ～ XL"},{"retail":1320,"size":"XXL"}]},"5709-01":{"name":"4.4オンス ドライスムース リサイクルポリエステル ロングスリーブ Tシャツ","prices":[{"retail":1400,"size":"S ～ XL"},{"retail":1540,"size":"XXL"}]},"5900-01":{"name":"4.1オンス ドライアスレチック Tシャツ〈アダルト〉","prices":[{"retail":890,"size":"S ～ XL","color":"ホワイト・カラー"},{"retail":1240,"size":"S ～ XL","color":"ヘザーカラー"},{"retail":1700,"size":"S ～ XL","color":"ウッドランド柄"},{"retail":1000,"size":"XXL ～ XXXXL","color":"ホワイト・カラー"},{"retail":1290,"size":"XXL ～ XXXXL","color":"ヘザーカラー"},{"retail":1800,"size":"XXL ～ XXXXL","color":"ウッドランド柄"},{"retail":1370,"size":"5XL・6XL","color":"ホワイト・カラー"},{"retail":1670,"size":"5XL・6XL","color":"ヘザーカラー"}]},"5900-02":{"name":"4.1オンス ドライアスレチック Tシャツ〈120～160cm〉","prices":[{"retail":820,"size":"120 ～ 160cm","color":"ホワイト・カラー"},{"retail":1110,"size":"120 ～ 160cm","color":"ヘザーカラー"}]},"5900-03":{"name":"4.1オンス ドライアスレチック Tシャツ〈ウィメンズ〉","prices":[{"retail":890,"size":"W-M・W-L","color":"ホワイト・カラー"},{"retail":1240,"size":"W-M・W-L","color":"ヘザーカラー"}]},"5910-01":{"name":"4.1オンス ドライアスレチック ポロシャツ","prices":[{"retail":1610,"size":"XS ～ XL"},{"retail":1930,"size":"XXL ～ XXXXL"}]},"5912-01":{"name":"4.1オンス ドライアスレチック ポロシャツ（ポケット付）","prices":[{"retail":1610,"size":"XS ～ XL"},{"retail":1930,"size":"XXL ～ XXXXL"}]},"5913-01":{"name":"6.2オンス プレミアム ロングスリーブ Tシャツ（2.1インチリブ）","prices":[{"retail":2930,"size":"S ～ XL","color":"ホワイト"},{"retail":3200,"size":"S ～ XL","color":"カラー"},{"retail":3720,"size":"XXL","color":"ホワイト"},{"retail":4170,"size":"XXL","color":"カラー"}]},"5914-01":{"name":"4.1オンス ドライアスレチック ショーツ","prices":[{"retail":2220,"size":"S ～ XL"},{"retail":2580,"size":"XXL"}]},"5921-01":{"name":"4.1オンス ドライアスレチック ポロシャツ（ボタンダウン）（ポケット付）","prices":[{"retail":1980,"size":"XS ～ XL"},{"retail":2120,"size":"XXL ～ XXXXL"}]},"5927-01":{"name":"4.1オンス ドライアスレチック ルーズフィット ラインリブ Tシャツ","prices":[{"retail":1900,"size":"M ～ XL"}]},"5928-01":{"name":"10.0オンス T/C クルーネック スウェット（裏起毛）","prices":[{"retail":3680,"size":"S ～ XL","color":"ホワイト・カラー"},{"retail":4050,"size":"S ～ XL","color":"アッシュ"},{"retail":4410,"size":"XXL","color":"ホワイト・カラー"},{"retail":4770,"size":"XXL","color":"アッシュ"},{"retail":4710,"size":"XXXL","color":"ホワイト・カラー"}]},"5942-01":{"name":"6.2オンス プレミアム Tシャツ","prices":[{"retail":1760,"size":"XS ～ XL","color":"ホワイト"},{"retail":1870,"size":"XS ～ XL","color":"カラー"},{"retail":2240,"size":"XXL","color":"ホワイト"},{"retail":2460,"size":"XXL","color":"カラー"},{"retail":2460,"size":"XXXL","color":"ホワイト"},{"retail":2750,"size":"XXXL","color":"カラー"}]},"5982-01":{"name":"4.1オンス ドライアスレチック ベースボールシャツ","prices":[{"retail":2490,"size":"S ～ XXL","color":"ホワイト・カラー"},{"retail":2930,"size":"S ～ XXL","color":"ストライプ柄・ウッドランド柄"}]},"5992-01":{"name":"4.1オンス ドライアスレチック ルーズフィット バスケットボールシャツ","prices":[{"retail":2000,"size":"M ～ XL"}]},"7059-01":{"name":"ナイロン コーチ ジャケット（裏地付）","prices":[{"retail":5900,"size":"S ～ XL"},{"retail":6530,"size":"XXL"}]},"7061-01":{"name":"マイクロリップストップ スタッフ ジャケット（一重）","prices":[{"retail":3200,"size":"S ～ XXL"},{"retail":3950,"size":"XXXL ～ XXXXL"}]},"7068-01":{"name":"マイクロリップストップ スタンド ジャケット（裏地付）","prices":[{"retail":6030,"size":"S ～ XXL"}]},"7069-01":{"name":"マイクロリップストップ フードイン ジャケット（裏フリース）","prices":[{"retail":7120,"size":"S ～ XXL"}]},"7078-01":{"name":"T/C スウィングトップ（裏地付）","prices":[{"retail":7580,"size":"S ～ XL"},{"retail":8340,"size":"XXL"}]},"7079-01":{"name":"T/C スタジアム ジャケット（裏地付）","prices":[{"retail":8150,"size":"S ～ XL"},{"retail":8980,"size":"XXL"}]},"7448-01":{"name":"T/C コーチ ジャケット（裏地付）","prices":[{"retail":7580,"size":"S ～ XL"},{"retail":8340,"size":"XXL"}]},"9240-01":{"name":"クルーソックス","prices":[{"retail":1340,"size":"22ｰ25・25ｰ29"}]},"9664-01":{"name":"フラットバイザー スナップバック キャップ","prices":[{"retail":2180,"size":"F"}]},"9670-01":{"name":"コットン ツイル ロー キャップ","prices":[{"retail":1640,"size":"F","color":"ホワイト・カラー"},{"retail":2010,"size":"F","color":"デニム"}]},"9675-01":{"name":"コットン ツイル バケット ハット","prices":[{"retail":2830,"size":"F","color":"カラー"},{"retail":3000,"size":"F","color":"デニム"}]},"9680-01":{"name":"コットン ツイル メッシュ キャップ","prices":[{"retail":1570,"size":"F"}]},"2291-01":{"name":"9.4オンス T/R ダンボールニット フルジップ パーカ","prices":[{"size":"S ～ XL","retail":8000}]},"2292-01":{"name":"9.4オンス T/R ダンボールニット プルオーバー パーカ","prices":[{"size":"S ～ XL","retail":6371}]},"2293-01":{"name":"9.4オンス T/R ダンボールニット フルジップ スタンド ジャケット","prices":[{"size":"S ～ XL","retail":6857}]},"2294-01":{"name":"9.4オンス T/R ダンボールニット パンツ","prices":[{"size":"S ～ XL","retail":6371}]},"5203-01":{"name":"10.0オンス ビッグシルエット スウェット フルジップ パーカ（裏パイル）","prices":[{"size":"M ～ XL","color":"カラー","retail":8171},{"size":"M ～ XL","color":"アッシュ","retail":8629}]},"5204-01":{"name":"10.0オンス ビッグシルエット スウェット プルオーバー パーカ（裏パイル）","prices":[{"size":"M ～ XL","color":"カラー","retail":7171},{"size":"M ～ XL","color":"アッシュ","retail":7543}]},"5205-01":{"name":"10.0オンス ビッグシルエット クルーネック スウェット（裏パイル）","prices":[{"size":"M ～ XL","color":"カラー","retail":5543},{"size":"M ～ XL","color":"アッシュ","retail":5871}]},"5621-01":{"name":"10.0オンス T/C ボックスシルエット スウェット フルジップ パーカ（裏起毛）","prices":[{"size":"S ～ XL","color":"ホワイト・カラー","retail":7714},{"size":"S ～ XL","color":"アッシュ","retail":8100}]},"5627-01":{"name":"10.0オンス T/C ビッグシルエット クルーネック スウェット（裏起毛）","prices":[{"size":"M ～ XL","color":"ホワイト・カラー","retail":5543},{"size":"M ～ XL","color":"アッシュ","retail":5871}]},"5631-01":{"name":"10.0オンス T/C ビッグシルエット スウェット プルオーバー パーカ（裏起毛）","prices":[{"size":"M ～ XL","color":"ホワイト・カラー","retail":7171},{"size":"M ～ XL","color":"アッシュ","retail":7543}]},"5762-01":{"name":"12.0オンス ヘヴィーウェイト スウェット フルジップ パーカ（裏起毛）","prices":[{"size":"S ～ XL","retail":7743},{"size":"XXL","retail":8514}]},"5763-01":{"name":"12.0オンス ヘヴィーウェイト スウェット プルオーバー パーカ（裏起毛）","prices":[{"size":"S ～ XL","retail":6671},{"size":"XXL","retail":7343}]},"5764-01":{"name":"12.0オンス ヘヴィーウェイト クルーネック スウェット（裏起毛）","prices":[{"size":"S ～ XL","retail":5500},{"size":"XXL","retail":6029}]},"5765-01":{"name":"12.0オンス ヘヴィーウェイト スウェット パンツ（裏起毛）","prices":[{"size":"M ～ XL","retail":6671}]},"5767-01":{"name":"12.7オンス ヘヴィーウェイト スウェット フルジップ パーカ（裏パイル）","prices":[{"size":"S ～ XL","retail":7743},{"size":"XXL","retail":8514}]},"5768-01":{"name":"12.7オンス ヘヴィーウェイト スウェット プルオーバー パーカ（裏パイル）","prices":[{"size":"S ～ XL","retail":6671},{"size":"XXL","retail":7343}]},"5769-01":{"name":"12.7オンス ヘヴィーウェイト クルーネック スウェット（裏パイル）","prices":[{"size":"S ～ XL","retail":5500},{"size":"XXL","retail":6029}]},"5797-01":{"name":"15.0オンス オープンエンド マグナムウェイト スウェット フルジップ パーカ（裏起毛）","prices":[{"size":"M ～ XXL","color":"カラー","retail":9857},{"size":"M ～ XXL","color":"アッシュ","retail":10429}]},"5798-01":{"name":"15.0オンス オープンエンド マグナムウェイト スウェット プルオーバー パーカ（裏起毛）","prices":[{"size":"M ～ XXL","color":"カラー","retail":8429},{"size":"M ～ XXL","color":"アッシュ","retail":9000}]},"5799-01":{"name":"15.0オンス オープンエンド マグナムウェイト クルーネック スウェット（裏起毛）","prices":[{"size":"M ～ XXL","color":"カラー","retail":7000},{"size":"M ～ XXL","color":"アッシュ","retail":7429}]},"7219-01":{"name":"コットンライク ナイロン トレーニング パンツ（一重）","prices":[{"size":"S ～ XL","retail":6029}]},"7220-01":{"name":"コットンライク ナイロン トレーニング ジャケット（裏地付）","prices":[{"size":"S ～ XL","retail":8086}]},"7463-01":{"name":"インサレーテッド フルジップ パーカ（中綿入）","prices":[{"size":"M ～ XL","retail":12143}]},"7464-01":{"name":"インサレーテッド スタンド ジャケット（中綿入）","prices":[{"size":"M ～ XL","retail":11000}]},"7490-01":{"name":"タイプ MA-1 ジャケット（中綿入）","prices":[{"size":"S ～ XL","retail":11729}]},"7491-01":{"name":"スタジアム ジャケット（中綿入）","prices":[{"size":"S ～ XL","retail":11729}]},"7492-01":{"name":"コーチ ジャケット（ボア裏地付）","prices":[{"size":"S ～ XL","retail":10300}]},"7493-01":{"name":"シェル フリース リバーシブル スタンド ジャケット","prices":[{"size":"M ～ XL","retail":11571}]}},"TOMS":{"00007-BBS":{"name":"メッシュビブス","prices":[{"size":"L","retail":1400},{"size":"XXL","retail":1550}]},"00036-ZBS":{"name":"ジップアップビブス","prices":[{"size":"F","retail":1550},{"size":"XXL","retail":1700}]},"00051-ET":{"name":"ベーシックカラーブルゾン","prices":[{"size":"XS - 2XL","retail":3600},{"size":"3XL, 4XL","retail":4000}]},"00061-RSJ":{"name":"リフレクスポーツジャケット","prices":[{"size":"XS - 2XL","retail":3900},{"size":"3XL, 4XL","retail":4300}]},"00068-RSV":{"name":"リフレクスポーツベスト","prices":[{"size":"XS - 2XL","retail":3900},{"size":"3XL, 4XL","retail":4300}]},"00083-BBT":{"name":"4.0オンス ライトウェイトTシャツ","prices":[{"size":"150","retail":780,"color":"ホワイト"},{"size":"S - XL","retail":830,"color":"ホワイト"},{"size":"XXL","retail":1090,"color":"ホワイト"},{"size":"150","retail":930,"color":"カラー"},{"size":"S - XL","retail":1040,"color":"カラー"},{"size":"XXL","retail":1250,"color":"カラー"}]},"00085-CVT":{"name":"5.6オンス ヘビーウェイトTシャツ","prices":[{"size":"100 - 150","retail":1000,"color":"ホワイト"},{"size":"WM, WL","retail":1100,"color":"ホワイト"},{"size":"XS - XL","retail":1100,"color":"ホワイト"},{"size":"XXL, XXXL","retail":1400,"color":"ホワイト"},{"size":"4XL, 5XL","retail":1600,"color":"ホワイト"},{"size":"100 - 150","retail":1100,"color":"カラー"},{"size":"WM, WL","retail":1200,"color":"カラー"},{"size":"XS - XL","retail":1200,"color":"カラー"},{"size":"XXL, XXXL","retail":1500,"color":"カラー"},{"size":"4XL, 5XL","retail":1700,"color":"カラー"}]},"00086-DMT":{"name":"5.0オンス ベーシックTシャツ","prices":[{"size":"100 - 150","retail":800,"color":"ホワイト"},{"size":"XS - XL","retail":1060,"color":"ホワイト"},{"size":"2XL, 3XL","retail":1200,"color":"ホワイト"},{"size":"100 - 150","retail":950,"color":"カラー"},{"size":"XS - XL","retail":1200,"color":"カラー"},{"size":"2XL, 3XL","retail":1400,"color":"カラー"}]},"00087-OET":{"name":"5.9オンス オープンエンドＴシャツ","prices":[{"size":"S - XL","retail":1220,"color":"ホワイト"},{"size":"2XL, 3XL","retail":1520,"color":"ホワイト"},{"size":"S - XL","retail":1320,"color":"カラー"},{"size":"2XL, 3XL","retail":1750,"color":"カラー"}]},"00100-VP":{"name":"5.8オンス T/Cポロシャツ","prices":[{"size":"SS - LL","retail":2090},{"size":"3L - 5L","retail":2290}]},"00102-CVL":{"name":"5.6オンス ヘビーウェイト長袖Tシャツ","prices":[{"size":"110 - 150","retail":1190,"color":"ホワイト"},{"size":"XS - XL","retail":1630,"color":"ホワイト"},{"size":"2XL, 3XL","retail":2000,"color":"ホワイト"},{"size":"110 - 150","retail":1320,"color":"カラー"},{"size":"XS - XL","retail":1750,"color":"カラー"},{"size":"2XL, 3XL","retail":2120,"color":"カラー"}]},"00103-CBT":{"name":"5.6オンス ヘビーウェイトベビーTシャツ","prices":[{"size":"80, 90","retail":1150,"color":"ホワイト"},{"size":"80, 90","retail":1300,"color":"カラー"}]},"00106-CRT":{"name":"5.6オンス ヘビーウェイトラグランTシャツ","prices":[{"size":"XS - XL","retail":1700},{"size":"2XL, 3XL","retail":2100}]},"00107-CRB":{"name":"5.6オンス ヘビーウェイト ベースボールTシャツ","prices":[{"size":"XS - XL","retail":1850},{"size":"2XL, 3XL","retail":2100}]},"00109-PCT":{"name":"5.6オンス ヘビーウェイトポケットTシャツ","prices":[{"size":"S - XL","retail":1450,"color":"ホワイト"},{"size":"2XL, 3XL","retail":1700,"color":"ホワイト"},{"size":"S - XL","retail":1600,"color":"カラー"},{"size":"2XL, 3XL","retail":1980,"color":"カラー"}]},"00110-CLL":{"name":"5.6オンス ヘビーウェイトLS-Tシャツ（+リブ）","prices":[{"size":"XS - XL","retail":1800,"color":"ホワイト"},{"size":"2XL, 3XL","retail":2200,"color":"ホワイト"},{"size":"XS - XL","retail":1940,"color":"カラー"},{"size":"2XL, 3XL","retail":2390,"color":"カラー"}]},"00113-BCV":{"name":"5.6オンス ヘビーウェイトビッグＴシャツ","prices":[{"size":"S - XL","retail":1550,"color":"ホワイト"},{"size":"S - XL","retail":1700,"color":"カラー"}]},"00114-BCL":{"name":"5.6オンス ヘビーウェイトビッグLS-Tシャツ","prices":[{"size":"S - XL","retail":2090,"color":"ホワイト"},{"size":"S - XL","retail":2190,"color":"ブラック"}]},"00141-NVP":{"name":"5.8オンス T/Cポロシャツ（ポケット無し）","prices":[{"size":"SS - LL","retail":2090},{"size":"3L - 5L","retail":2290}]},"00147-BHV":{"name":"7.4オンス スーパーヘビービッグTシャツ","prices":[{"size":"S - XL","retail":1800,"color":"ホワイト"},{"size":"S - XL","retail":1900,"color":"カラー"}]},"00148-HVT":{"name":"7.4オンス スーパーヘビーTシャツ","prices":[{"size":"S - XL","retail":1550,"color":"ホワイト"},{"size":"2XL, 3XL","retail":1900,"color":"ホワイト"},{"size":"S - XL","retail":1700,"color":"カラー"},{"size":"2XL, 3XL","retail":2000,"color":"カラー"}]},"00149-HVL":{"name":"7.4オンス スーパーヘビー長袖Tシャツ","prices":[{"size":"S - XL","retail":2040,"color":"ホワイト"},{"size":"2XL, 3XL","retail":2400,"color":"ホワイト"},{"size":"XS - XL","retail":2160,"color":"カラー"},{"size":"2XL, 3XL","retail":2520,"color":"カラー"}]},"00169-VLP":{"name":"5.8オンス T/C長袖ポロシャツ（ポケット付）","prices":[{"size":"SS - LL","retail":2390},{"size":"3L - 5L","retail":2550}]},"00216-MLH":{"name":"8.4オンス フーデッドライトパーカー","prices":[{"size":"100 - 150","retail":3300},{"size":"WM, S - 2XL","retail":3720}]},"00217-MLZ":{"name":"8.4オンス ジップアップライトパーカー","prices":[{"size":"100 - 150","retail":4460},{"size":"WM, S - 2XL","retail":4550}]},"00218-MLP":{"name":"8.4オンス ライトスウェットパンツ","prices":[{"size":"100 - 150","retail":3110},{"size":"WM, S - 2XL","retail":3380}]},"00219-MLC":{"name":"8.4オンス クルーネックライトトレーナー","prices":[{"size":"100 - 150","retail":2570},{"size":"WM, S - 2XL","retail":2860}]},"00220-MHP":{"name":"8.4オンス ライトスウェットハーフパンツ","prices":[{"size":"S - 2XL","retail":2700}]},"00227-FVC":{"name":"12.0オンス 裏起毛ヘビートレーナー","prices":[{"size":"S - XL","retail":4500},{"size":"2XL","retail":4900}]},"00228-FVH":{"name":"12.0オンス 裏起毛ヘビープルパーカー","prices":[{"size":"S - XL","retail":5900},{"size":"2XL","retail":6300}]},"00229-FVZ":{"name":"12.0オンス 裏起毛ヘビージップパーカー","prices":[{"size":"S - XL","retail":6900},{"size":"2XL","retail":7300}]},"00300-ACT":{"name":"4.4オンス ドライTシャツ","prices":[{"size":"100 - 150","retail":800,"color":"ホワイト・カラー・蛍光カラー"},{"size":"WM - LL","retail":860,"color":"ホワイト・カラー・蛍光カラー"},{"size":"3L - 5L","retail":990,"color":"ホワイト・カラー・蛍光カラー"},{"size":"6L, 7L","retail":1350,"color":"ホワイト・カラー・蛍光カラー"},{"size":"100 - 150","retail":1100,"color":"ミックスカラー"},{"size":"WM - LL","retail":1230,"color":"ミックスカラー"},{"size":"3L - 5L","retail":1250,"color":"ミックスカラー"}]},"00302-ADP":{"name":"4.4オンス ドライポロシャツ","prices":[{"size":"120 - 150","retail":1380,"color":"ホワイト・カラー"},{"size":"SS - LL","retail":1480,"color":"ホワイト・カラー"},{"size":"3L - 5L","retail":1790,"color":"ホワイト・カラー"}]},"00304-ALT":{"name":"4.4オンス ドライロングスリーブTシャツ","prices":[{"size":"140, 150","retail":1150},{"size":"SS - LL","retail":1290},{"size":"3L - 5L","retail":1690},{"size":"6L, 7L","retail":2050}]},"00313-ABN":{"name":"4.4オンス ドライボタンダウンポロシャツポケット無","prices":[{"size":"S - LL","retail":1830},{"size":"3L - 5L","retail":1960}]},"00314-ABL":{"name":"4.4オンス ドライボタンダウン長袖ポロシャツ","prices":[{"size":"S - LL","retail":2150},{"size":"3L - 5L","retail":2290}]},"00315-AYB":{"name":"4.4オンス ドライレイヤードボタンダウンポロシャツ","prices":[{"size":"S - LL","retail":2090},{"size":"3L - 5L","retail":2350}]},"00321-ACR":{"name":"4.4オンス ドライパンツ","prices":[{"size":"SS - LL","retail":2190},{"size":"3L - 5L","retail":2510}]},"00325-ACP":{"name":"4.4オンス ドライハーフパンツ","prices":[{"size":"100","retail":1420},{"size":"110 - 150","retail":1450},{"size":"SS - LL","retail":1590},{"size":"3L - 5L","retail":1950}]},"00330-AVP":{"name":"4.4オンス ドライポロシャツ（ポケット付）","prices":[{"size":"SS - LL","retail":1490,"color":"ホワイト・カラー"},{"size":"3L - 5L","retail":1790,"color":"ホワイト・カラー"},{"size":"6L, 7L","retail":2450,"color":"ホワイト・カラー"}]},"00331-ABP":{"name":"4.4オンス ドライボタンダウンポロシャツ","prices":[{"size":"S - LL","retail":1830},{"size":"3L - 5L","retail":1960}]},"00335-ALP":{"name":"4.4オンス ドライ長袖ポロシャツ（ポケット付）","prices":[{"size":"SS - LL","retail":2030},{"size":"3L - 5L","retail":2400},{"size":"6L, 7L","retail":3330}]},"00336-DBS":{"name":"4.4オンス ドライメッシュビブス","prices":[{"size":"JL, F","retail":1400},{"size":"XXL","retail":1550}]},"00337-AVT":{"name":"4.4オンス ドライVネックTシャツ","prices":[{"size":"S - LL","retail":1190},{"size":"3L - 5L","retail":1490}]},"00338-AMZ":{"name":"4.4オンス ドライジップパーカー","prices":[{"size":"S - 3L","retail":2290},{"size":"4L, 5L","retail":2550}]},"00339-AYP":{"name":"4.4オンス ドライレイヤードポロシャツ","prices":[{"size":"SS - LL","retail":1950},{"size":"3L - 5L","retail":2350}]},"00342-ASZ":{"name":"7.7オンス ドライスウェットジップパーカー","prices":[{"size":"120 - 150","retail":4130},{"size":"SS - 3L","retail":4500}]},"00343-ASP":{"name":"7.7オンス ドライスウェットパンツ","prices":[{"size":"120 - 150","retail":2580,"color":"杢グレー"},{"size":"SS - 3L","retail":3130,"color":"ブラック・ネイビー"}]},"00344-ASJ":{"name":"7.7オンス ドライスウェットジップジャケット","prices":[{"size":"120 - 150","retail":4130},{"size":"SS - 3L","retail":4500}]},"00350-AIT":{"name":"3.5オンス インターロックドライTシャツ","prices":[{"size":"120 - 150","retail":770},{"size":"SS - LL","retail":840},{"size":"3L","retail":900}]},"00352-AIL":{"name":"3.5オンス インターロック ドライ長袖Tシャツ","prices":[{"size":"SS - LL","retail":1200},{"size":"3L","retail":1520}]},"00353-AIN":{"name":"3.5オンス インターロック ドライノースリーブ","prices":[{"size":"SS - LL","retail":1000},{"size":"3L","retail":1400}]},"00358-AMJ":{"name":"4.4オンス ドライジップジャケット","prices":[{"size":"S - 3L","retail":2290},{"size":"4L, 5L","retail":2550}]},"00700-EVM":{"name":"イベントメッシュキャップ","prices":[{"size":"JL, F","retail":570}]},"00710-CTC":{"name":"クラブツイルキャップ","prices":[{"size":"F","retail":780}]},"00760-ENB":{"name":"ナチュラルコットンバッグ","prices":[{"size":"F","retail":290}]},"00762-ENN":{"name":"ナチュラルファイルバッグ","prices":[{"size":"F","retail":220}]},"00778-TCC":{"name":"キャンバストート","prices":[{"size":"S","retail":480,"color":"ナチュラル"},{"size":"SM","retail":580,"color":"ナチュラル"},{"size":"M","retail":610,"color":"ナチュラル"},{"size":"ML","retail":690,"color":"ナチュラル"},{"size":"L","retail":850,"color":"ナチュラル"},{"size":"S","retail":550,"color":"カラー"},{"size":"SM","retail":680,"color":"カラー"},{"size":"M","retail":740,"color":"カラー"},{"size":"ML","retail":910,"color":"カラー"},{"size":"L","retail":1010,"color":"カラー"}]},"00779-TSH":{"name":"キャンバスショルダートート(ポケット付)","prices":[{"size":"M","retail":850,"color":"ナチュラル"},{"size":"M","retail":990,"color":"ブラック"}]},"00780-TWT":{"name":"キャンバスツートントート","prices":[{"size":"S","retail":560},{"size":"M","retail":770}]},"00781-TCL":{"name":"ライトキャンバストート","prices":[{"size":"S","retail":460,"color":"ナチュラル"},{"size":"M","retail":590,"color":"ナチュラル"},{"size":"L","retail":730,"color":"ナチュラル"},{"size":"S","retail":510,"color":"ブラック"},{"size":"M","retail":700,"color":"ブラック"},{"size":"L","retail":880,"color":"ブラック"}]},"00782-TFL":{"name":"ライトキャンバスフラットトート","prices":[{"size":"S","retail":430,"color":"ナチュラル"},{"size":"M","retail":520,"color":"ナチュラル"},{"size":"L","retail":610,"color":"ナチュラル"},{"size":"S","retail":490,"color":"ブラック"},{"size":"M","retail":590,"color":"ブラック"},{"size":"L","retail":690,"color":"ブラック"}]},"00784-TBG":{"name":"レジャートート","prices":[{"size":"F","retail":580}]},"00785-SBG":{"name":"シューズバッグ","prices":[{"size":"F","retail":460}]},"00786-LBG":{"name":"ランドリーバッグ","prices":[{"size":"F","retail":620}]},"00800-NEH":{"name":"ベーシックハッピ","prices":[{"size":"F","retail":3800}]},"00843-AC3":{"name":"ACTドライTシャツ3枚パック","prices":[{"size":"M - LL","retail":2560}]}},"TR":{"OGB-910":{"name":"オーガニックコットンTシャツ","prices":[{"retail":2200,"size":"110 ～ 150"},{"retail":2300,"size":"S ～ XL"},{"retail":2400,"size":"XXL"}]},"OGL-914":{"name":"オーガニックコットンロングスリーブTシャツ","prices":[{"retail":3500,"size":"S ～ XXL"}]},"OGS-915":{"name":"オーガニックコットンスウェットシャツ","prices":[{"retail":5800,"size":"S ～ XXL"}]},"OGP-916":{"name":"オーガニックコットンP/Oパーカ","prices":[{"retail":8200,"size":"S ～ XXL"}]},"PCJ-940":{"name":"リサイクルポリコーチジャケット","prices":[{"retail":8000,"size":"M ～ XL"}]},"TR-1046":{"name":"オーガニックコットンキャンバストート（S）","prices":[{"retail":1000,"size":"F"}]},"TR-1047":{"name":"オーガニックコットンキャンバストート（M）","prices":[{"retail":1300,"size":"F"}]},"TR-1048":{"name":"オーガニックコットンキャンバストート（L）","prices":[{"retail":1600,"size":"F"}]},"RPM-400":{"name":"リサイクルポリエステルパースミニバッグ","prices":[{"retail":2300,"size":"F"}]},"RPB-401":{"name":"リサイクルポリエステルB4トートバッグ","prices":[{"retail":3000,"size":"F"}]},"RPD-402":{"name":"リサイクルポリエステルドラムバッグ","prices":[{"retail":3600,"size":"F"}]},"RPT-925":{"name":"リサイクルポリエステルTシャツ","prices":[{"retail":2000,"size":"S ～ XXL"}]},"CLD-923":{"name":"コットンライクドライTシャツ","prices":[{"retail":2600,"size":"S ～ XXL"}]},"OE1116":{"name":"6.2oz オープンエンド マックスウェイト Tシャツ","prices":[{"retail":1400,"size":"90 ～ 150","color":"ホワイト"},{"retail":1600,"size":"XS ～ XXL","color":"ホワイト"},{"retail":1900,"size":"XXXL","color":"ホワイト"},{"retail":2100,"size":"4XL ～ 5XL","color":"ホワイト"},{"retail":1500,"size":"90 ～ 150","color":"カラー"},{"retail":1700,"size":"XS ～ XXL","color":"カラー"},{"retail":2100,"size":"XXXL","color":"カラー"},{"retail":2200,"size":"4XL ～ 5XL","color":"カラー"}]},"OE1117":{"name":"6.2oz オープンエンド マックスウェイト ポケットTシャツ","prices":[{"retail":1800,"size":"S ～ XL","color":"ホワイト"},{"retail":2100,"size":"XXL","color":"ホワイト"},{"retail":1900,"size":"S ～ XL","color":"カラー"}]},"OE1118":{"name":"6.2oz オープンエンド マックスウェイト バインダーネックTシャツ","prices":[{"retail":1800,"size":"S ～ XL","color":"ホワイト"},{"retail":2100,"size":"XXL","color":"ホワイト"},{"retail":1900,"size":"S ～ XL","color":"カラー"},{"retail":2200,"size":"XXL","color":"カラー"}]},"OE1119":{"name":"6.2oz オープンエンド マックスウェイト バインダーネック ポケットTシャツ","prices":[{"retail":1900,"size":"S ～ XL","color":"ホワイト"},{"retail":2200,"size":"XXL","color":"ホワイト"},{"retail":2000,"size":"S ～ XL","color":"カラー"},{"retail":2300,"size":"XXL","color":"カラー"}]},"GAT-500":{"name":"5.6oz ヘビーウェイトTシャツ","prices":[{"retail":1400,"size":"110 ～ 150","color":"ホワイト"},{"retail":1500,"size":"160 ～ XXL","color":"ホワイト"},{"retail":1500,"size":"110 ～ 150","color":"カラー"},{"retail":1600,"size":"160 ～ XXL","color":"カラー"}]},"TRS-700":{"name":"4.3oz ベーシックスタイルTシャツ","prices":[{"retail":1300,"size":"150 ～ XXL","color":"ホワイト"},{"retail":1500,"size":"150 ～ XXL","color":"カラー"}]},"OE1401":{"name":"6.2oz オープンエンド マックスウェイト メンズオーバーTシャツ","prices":[{"retail":2700,"size":"M ～ XL"}]},"OE1130":{"name":"6.2oz オープンエンド マックスウェイト オーバーサイズTシャツ（5分袖）","prices":[{"retail":2200,"size":"M ～ XXL","color":"ホワイト"},{"retail":2400,"size":"M ～ XXL","color":"カラー"}]},"PGT-144":{"name":"ピグメントTシャツ","prices":[{"retail":3300,"size":"M ～ XXL"}]},"TDT-148":{"name":"タイダイTシャツ","prices":[{"retail":3400,"size":"M ～ XXL"}]},"OE1120":{"name":"6.2oz オープンエンド マックスウェイト ヘンリーネックTシャツ","prices":[{"retail":2500,"size":"S ～ XL","color":"ホワイト"},{"retail":2600,"size":"XXL","color":"ホワイト"},{"retail":2700,"size":"S ～ XL","color":"カラー"},{"retail":3000,"size":"XXL","color":"カラー"}]},"OE1121":{"name":"6.2oz オープンエンド マックスウェイト リンガーTシャツ","prices":[{"retail":2100,"size":"S ～ XL"},{"retail":2600,"size":"XXL"}]},"UCS-950":{"name":"USAコットンTシャツ","prices":[{"retail":2800,"size":"S ～ XL","color":"ホワイト"},{"retail":3100,"size":"XXL","color":"ホワイト"},{"retail":3000,"size":"S ～ XL","color":"カラー"},{"retail":3300,"size":"XXL","color":"カラー"}]},"JPC-001":{"name":"チューブラーTシャツ（日本製）","prices":[{"retail":7400,"size":"S ～ XXL"}]},"SFT-106":{"name":"4.3oz スリムフィットTシャツ","prices":[{"retail":1400,"size":"XS ～ XXL","color":"ホワイト"},{"retail":1500,"size":"XS ～ XL","color":"カラー"}]},"SFV-113":{"name":"4.3oz スリムフィットVネックTシャツ","prices":[{"retail":1500,"size":"XS ～ XL","color":"ホワイト"},{"retail":1600,"size":"XS ～ XL","color":"カラー"}]},"SFU-114":{"name":"4.3oz スリムフィットUネックTシャツ","prices":[{"retail":1500,"size":"XS ～ XL","color":"ホワイト"},{"retail":1600,"size":"XS ～ XL","color":"カラー"}]},"SNB-141":{"name":"ナローボーダーTシャツ","prices":[{"retail":2300,"size":"XS"},{"retail":2400,"size":"S ～ XL"}]},"TCR-112":{"name":"4.4oz トライブレンドTシャツ","prices":[{"retail":1900,"size":"XS ～ XL"}]},"OE1301":{"name":"6.2oz オープンエンド マックスウェイト ウィメンズオーバーTシャツ","prices":[{"retail":2100,"size":"M"}]},"WDN-804":{"name":"ウィメンズ ドルマンTシャツ","prices":[{"retail":2000,"size":"M"}]},"WDO-805":{"name":"ウィメンズ ドルマンワンピース","prices":[{"retail":2400,"size":"M"}]},"WNS-807":{"name":"スリーブレスワイドTシャツ","prices":[{"retail":2200,"size":"M"}]},"FDT-100":{"name":"ファイバードライTシャツ","prices":[{"retail":1500,"size":"110 ～ 150","color":"ホワイト"},{"retail":1600,"size":"S ～ XL","color":"ホワイト"},{"retail":1800,"size":"XXL ～ XXXL","color":"ホワイト"},{"retail":2100,"size":"4XL ～ 5XL","color":"ホワイト"},{"retail":2300,"size":"6XL ～ 7XL","color":"ホワイト"},{"retail":1600,"size":"110 ～ 150","color":"カラー"},{"retail":1700,"size":"S ～ XL","color":"カラー"},{"retail":2000,"size":"XXL ～ XXXL","color":"カラー"},{"retail":2200,"size":"4XL ～ 5XL","color":"カラー"},{"retail":2400,"size":"6XL ～ 7XL","color":"カラー"}]},"HNC-102":{"name":"ハニカムTシャツ","prices":[{"retail":1500,"size":"120 ～ 150"},{"retail":1600,"size":"XS ～ XXXL"}]},"POV-109":{"name":"ファンクショナルドライTシャツ","prices":[{"retail":1500,"size":"110 ～ 150","color":"ホワイト"},{"retail":1600,"size":"S ～ XL","color":"ホワイト"},{"retail":1700,"size":"XXL ～ XXXL","color":"ホワイト"},{"retail":2100,"size":"4XL ～ 5XL","color":"ホワイト"},{"retail":2600,"size":"6XL ～ 7XL","color":"ホワイト"},{"retail":1700,"size":"110 ～ 150","color":"カラー"},{"retail":1800,"size":"S ～ XL","color":"カラー"},{"retail":2000,"size":"XXL ～ XXXL","color":"カラー"},{"retail":2300,"size":"4XL ～ 5XL","color":"カラー"},{"retail":2800,"size":"6XL ～ 7XL","color":"カラー"}]},"FDB-270":{"name":"ファイバードライビブス","prices":[{"retail":1700,"size":"JL"},{"retail":1800,"size":"L"},{"retail":2000,"size":"XL"}]},"APP-260":{"name":"ポケット付きアクティブポロシャツ","prices":[{"retail":3300,"size":"XS ～ XXL"},{"retail":3700,"size":"XXXL ～ 5XL"}]},"ATP-261":{"name":"アクティブポロシャツ","prices":[{"retail":3100,"size":"WM ～ WL"},{"retail":3100,"size":"XS ～ XXL"},{"retail":3500,"size":"XXXL ～ 5XL"},{"retail":4000,"size":"6XL ～ 7XL"}]},"BDP-262":{"name":"ボタンダウンポロシャツ","prices":[{"retail":3500,"size":"XS ～ XXL"},{"retail":4100,"size":"XXXL ～ 5XL"}]},"VSN-267":{"name":"ベーシックポロシャツ（ポケなし）","prices":[{"retail":2400,"size":"XS ～ 4XL"}]},"POT-104":{"name":"ポケット付き長袖アクティブポロシャツ","prices":[{"retail":2400,"size":"XS ～ XL"},{"retail":2700,"size":"XXL ～ XXXL"}]},"APL-269":{"name":"ドライBDポロシャツ","prices":[{"retail":3900,"size":"XS ～ XXL","color":"ホワイト"},{"retail":4100,"size":"XS ～ XXL","color":"カラー"}]},"BSP-265":{"name":"ビズスタイルBDポロシャツ","prices":[{"retail":4500,"size":"S ～ XXL"}]},"OE1230":{"name":"6.2oz オープンエンド マックスウェイト ロングスリーブTシャツ（リブ無し）","prices":[{"retail":2400,"size":"110 ～ 150","color":"ホワイト"},{"retail":2700,"size":"S ～ XL","color":"ホワイト"},{"retail":3100,"size":"XXL","color":"ホワイト"},{"retail":3300,"size":"3XL ～ 4XL","color":"ホワイト"},{"retail":2600,"size":"110 ～ 150","color":"カラー"},{"retail":2800,"size":"S ～ XL","color":"カラー"},{"retail":3300,"size":"XXL","color":"カラー"},{"retail":3400,"size":"3XL ～ 4XL","color":"カラー"}]},"RL1216":{"name":"6.2oz オープンエンド マックスウェイト ロングスリーブTシャツ（リブ有り）","prices":[{"retail":2400,"size":"110 ～ 150","color":"ホワイト"},{"retail":2700,"size":"S ～ XL","color":"ホワイト"},{"retail":3100,"size":"XXL","color":"ホワイト"},{"retail":3300,"size":"XXXL","color":"ホワイト"},{"retail":2600,"size":"110 ～ 150","color":"カラー"},{"retail":2800,"size":"S ～ XL","color":"カラー"},{"retail":3300,"size":"XXL","color":"カラー"},{"retail":3400,"size":"XXXL","color":"カラー"}]},"UCL-951":{"name":"USAコットンロングスリーブTシャツ","prices":[{"retail":3600,"size":"S ～ XL","color":"ホワイト"},{"retail":3900,"size":"XXL","color":"ホワイト"},{"retail":3800,"size":"S ～ XL","color":"カラー"},{"retail":4100,"size":"XXL","color":"カラー"}]},"OE1210":{"name":"6.2oz オープンエンド 3/4スリーブ ベースボールTシャツ","prices":[{"retail":2900,"size":"S ～ XL"},{"retail":3400,"size":"XXL"}]},"OE1240":{"name":"6.2oz オープンエンド フットボールTシャツ","prices":[{"retail":3100,"size":"S ～ XL"}]},"OE1250":{"name":"6.2oz オープンエンド リラックスフィット ラグランTシャツ","prices":[{"retail":3300,"size":"S ～ XXL"}]},"SZP-111":{"name":"ジャージージップパーカー","prices":[{"retail":5200,"size":"XS ～ XL"}]},"POL-205":{"name":"ファイバードライロングTシャツ","prices":[{"retail":2300,"size":"150 ～ XXXL","color":"ホワイト"},{"retail":2400,"size":"4XL ～ 5XL","color":"ホワイト"},{"retail":2400,"size":"150 ～ XXXL","color":"カラー"},{"retail":2600,"size":"4XL ～ 5XL","color":"カラー"}]},"HNC-204":{"name":"ハニカム長袖Tシャツ","prices":[{"retail":2400,"size":"150 ～ XL"},{"retail":2600,"size":"XXL ～ XXXL"}]},"RSS-147":{"name":"スタンダードスウェットシャツ","prices":[{"retail":3500,"size":"S ～ XL"},{"retail":4000,"size":"XXL"}]},"RSP-142":{"name":"スタンダードP/Oパーカ","prices":[{"retail":4200,"size":"XS ～ XL"},{"retail":4500,"size":"XXL"}]},"RSZ-143":{"name":"スタンダードジップパーカ","prices":[{"retail":5000,"size":"XS ～ XL"},{"retail":5200,"size":"XXL"}]},"SP2252":{"name":"レギュラーウェイト ポケットレスP/Oパーカー","prices":[{"retail":4900,"size":"110 ～ 150"},{"retail":5100,"size":"S ～ XL"},{"retail":5500,"size":"XXL"},{"retail":5600,"size":"XXXL"}]},"SZ2251":{"name":"レギュラーウェイトスウェットジップパーカー","prices":[{"retail":5100,"size":"S ～ XL"},{"retail":5500,"size":"XXL"},{"retail":5600,"size":"XXXL"}]},"SP2250":{"name":"レギュラーウェイトスウェットP/Oパーカー","prices":[{"retail":5800,"size":"110 ～ 150"},{"retail":5900,"size":"S ～ XL"},{"retail":6400,"size":"XXL"}]},"SW2210":{"name":"レギュラーウェイトスウェットシャツ","prices":[{"retail":3700,"size":"110 ～ 150"},{"retail":4000,"size":"S ～ XL"},{"retail":4300,"size":"XXL"},{"retail":4400,"size":"XXXL"}]},"SB2280":{"name":"レギュラーウェイト ビッグシルエット スウェットシャツ","prices":[{"retail":5500,"size":"M ～ XL"}]},"BP2281":{"name":"レギュラーウェイト ビッグシルエット プルパーカー","prices":[{"retail":8000,"size":"M ～ XL"}]},"SH2253":{"name":"レギュラーウェイトハーフジップスウェットシャツ","prices":[{"retail":5100,"size":"M ～ XXL"}]},"PGS-149":{"name":"ピグメントスウェットシャツ","prices":[{"retail":8000,"size":"M ～ XXL"}]},"PGP-150":{"name":"ピグメントP/Oパーカー","prices":[{"retail":10000,"size":"M ～ XXL"}]},"SA7200":{"name":"レギュラーウェイトスウェットパンツ","prices":[{"retail":5200,"size":"150 ～ XXL"}]},"HSW-138":{"name":"ヘビーウェイトスウェットシャツ","prices":[{"retail":5800,"size":"S ～ XXL"}]},"HSP-136":{"name":"ヘビーウェイトP/Oパーカ","prices":[{"retail":6700,"size":"S ～ XXL"}]},"HSZ-137":{"name":"ヘビーウェイトジップパーカ","prices":[{"retail":7700,"size":"S ～ XXL"}]},"NBR-020":{"name":"ブライトコート","prices":[{"retail":4900,"size":"S ～ 3L"}]},"FLC-018":{"name":"フリースコート","prices":[{"retail":7200,"size":"M ～ LL"}]},"BCW-015":{"name":"ベンチウォーマー","prices":[{"retail":11300,"size":"XS ～ L"}]},"FNK-630":{"name":"ネックウォーマー","prices":[{"retail":1500,"size":"F"}]},"NSV-505":{"name":"バーサタイルナイロンショーツ","prices":[{"retail":4000,"size":"XS ～ XL"}]},"NLV-512":{"name":"バーサタイルナイロンパンツ","prices":[{"retail":5900,"size":"S ～ XL"}]},"HVT-024":{"name":"ヘビートートバッグ","prices":[{"retail":2800,"size":"F"}]},"NPZ-021":{"name":"イベントバッグ","prices":[{"retail":1200,"size":"F"}]},"CBT-030":{"name":"クラフトビッグトート","prices":[{"retail":4500,"size":"F"}]},"CRS-031":{"name":"クラフトリングショルダー","prices":[{"retail":3500,"size":"F"}]},"RMB-301":{"name":"リップショルダーマルシェバッグ","prices":[{"retail":2400,"size":"F"}]},"RMS-303":{"name":"リップミニサコッシュ","prices":[{"retail":1700,"size":"F"}]},"NPE-310":{"name":"ナイロン ポケッタブルバッグ","prices":[{"retail":1900,"size":"F"}]},"NPD-350":{"name":"ナイロンパッカブルデイバッグ","prices":[{"retail":3500,"size":"F"}]},"HMK-213":{"name":"帆前掛け（日本製）","prices":[{"retail":4200,"size":"F","color":"キナリ"},{"retail":5000,"size":"F","color":"カラー"}]},"PMK-214":{"name":"帆前掛け（ポケット付き）","prices":[{"retail":5000,"size":"F"}]},"TCA-014":{"name":"Beeエプロン","prices":[{"retail":2500,"size":"F"}]},"GA5542":{"name":"ショートエプロン","prices":[{"retail":2800,"size":"F"}]},"GA5560":{"name":"ソムリエエプロンM","prices":[{"retail":3400,"size":"F"}]},"GA5588":{"name":"ソムリエエプロンL","prices":[{"retail":3700,"size":"F"}]},"ETC-351":{"name":"イベントキャップ","prices":[{"retail":900,"size":"F"}]},"CKC-361":{"name":"コットンキャップ","prices":[{"retail":1300,"size":"F"}]},"FMC-362":{"name":"フライメッシュキャップ","prices":[{"retail":1700,"size":"F"}]},"WCC-363":{"name":"ウォッシュドキャップ","prices":[{"retail":2200,"size":"F"}]},"OTC-364":{"name":"オットーキャップ","prices":[{"retail":3200,"size":"F"}]},"OTC-365":{"name":"OTTO 6パネルミッドプロファイルベースボールキャップ","prices":[{"retail":3400,"size":"F"}]},"1400":{"name":"ベースボール ローキャップ（ツイル）","prices":[{"retail":2100,"size":"F"}]},"1155":{"name":"ベースボール ローキャップ（デニム）","prices":[{"retail":2400,"size":"F"}]},"1500":{"name":"バケットハット（ツイル）","prices":[{"retail":2800,"size":"S/M ～ L/XL"}]},"LBN-360":{"name":"ビーニー","prices":[{"retail":1200,"size":"F"}]},"CCS-902":{"name":"クルー丈カラーソックス","prices":[{"retail":1800,"size":"F"}]},"CLS-903":{"name":"スリーラインパイルソックス","prices":[{"retail":2100,"size":"F"}]}}};
+const MAKERS=[{v:'UA',l:'UnitedAthle'},{v:'TOMS',l:'TOMS（Printstar/glimmer）'},{v:'TR',l:'TRUSS'},{v:'WD',l:'wundow'},{v:'OTHER',l:'その他'},{v:'CARRYOVER',l:'持ち込みアイテム'}];
 // メーカー別サイズ定義
 const MAKER_SIZES={
   UA: ['XS','S','M','L','XL','XXL','XXXL','XXXXL','5XL','6XL','120','130','140','150','160','G-M','G-L','フリー','その他'],
-  PS: ['XS','S','M','L','XL','2XL','3XL','4XL','5XL','100','110','120','130','140','150','160','WM','WL','フリー','その他'],
-  GL: ['SS','S','M','L','LL','3L','4L','5L','6L','7L','100','110','120','130','140','150','WM','WL','フリー','その他'],
-  TR: ['XS','S','M','L','XL','XXL','XXXL','4XL','5XL','90','100','110','120','130','140','150','フリー','その他'],
-  CS: ['XS','S','M','L','XL','XXL','XXXL','4XL','5XL','90','100','110','120','130','140','150','フリー','その他'],
+  TOMS: ['SS','S','M','L','LL','XL','2XL','3L','3XL','4L','4XL','5L','5XL','6L','7L','100','110','120','130','140','150','WM','WL','フリー','その他'],
+  TR: ['XS','S','M','L','XL','XXL','XXXL','4XL','5XL','6XL','7XL','90','100','110','120','130','140','150','160','JL','フリー','その他'],
   WD: ['XS','S','M','L','XL','XXL','3XL','4XL','110','120','130','140','150','フリー','その他'],
   OTHER: ['XS','S','M','L','XL','XXL','XXXL','4XL','5XL','100','110','120','130','140','150','フリー','その他'],
 };
@@ -541,6 +590,162 @@ function getDefaultDisc(maker){
 function newMatRow(){const tot=getTotalQty();return{id:++mid,maker:'UA',makerCustom:'',code:'',color:'',size:'S',sizeCustom:'',qty:0,retail:0,disc:tot>=200?40:35};}
 function newMatGroup(){return{id:++mgid,name:'',customName:'',rows:[newMatRow()]};}
 function calcMatRow(r){if(!r.retail||!r.qty)return 0;return Math.round(r.retail*r.qty*(1-(r.disc??35)/100));}
+
+// 品番の大文字小文字を無視して検索するヘルパー
+function findItemByCode(makerDB, code){
+  if(!makerDB||!code) return null;
+  // 完全一致を優先
+  if(makerDB[code]) return {key:code, item:makerDB[code]};
+  // 大文字変換で検索
+  const upper=code.toUpperCase();
+  if(makerDB[upper]) return {key:upper, item:makerDB[upper]};
+  // 全キーを走査（ハイフン有無など吸収）
+  for(const k of Object.keys(makerDB)){
+    if(k.toUpperCase()===upper) return {key:k, item:makerDB[k]};
+  }
+  return null;
+}
+
+// 価格自動入力ポップアップ
+function lookupPrice(gId, rId){
+  const row = matGroups.flatMap(g=>g.rows).find(r=>r.id===rId);
+  if(!row) return;
+  const makerDB = PRICE_DB[row.maker];
+  if(!makerDB) return;
+  const code = (row.code||'').trim();
+  if(!code) return;
+
+  // すでに価格選択済み（retail設定済み）ならポップアップを出さない
+  if(row.retail) return;
+
+  const found = findItemByCode(makerDB, code);
+  const popup = document.getElementById('pp-'+rId);
+  if(!popup) return;
+
+  if(!found){ popup.innerHTML=''; return; }
+  const item = found.item;
+
+  const listHtml = item.prices.map((p,i)=>{
+    const label = [p.size||'', p.color||''].filter(Boolean).join(' / ') || '共通';
+    return `<div class="price-popup-item" onmousedown="applyPrice(${gId},${rId},${i})">
+      <span class="pi-label">${label}</span>
+      <span class="pi-price">¥${p.retail.toLocaleString()}</span>
+    </div>`;
+  }).join('');
+
+  popup.innerHTML = `<div class="price-popup" id="ppdiv-${rId}">
+    <span class="price-popup-close" onmousedown="closePopup(${rId})">×</span>
+    <div class="price-popup-title">📦 ${item.name}</div>
+    <div class="price-popup-list">${listHtml}</div>
+  </div>`;
+}
+
+// サイズ・カラーから最適な上代を自動取得
+function autoLookupRetail(row){
+  const makerDB = PRICE_DB[row.maker];
+  if(!makerDB) return null;
+  const code = (row.code||'').trim();
+  if(!code) return null;
+  const found = findItemByCode(makerDB, code);
+  if(!found||!found.item.prices.length) return null;
+  const item = found.item;
+
+  const sz = row.size||'';
+  const cl = row.color||'';
+
+  // サイズグループ判定
+  function sizeGroup(s){
+    if(!s) return '';
+    if(/XXXL|4XL|5XL|6XL/.test(s)) return 'XXXL+';
+    if(/^XXL$|^2XL$/.test(s)||s==='XXL') return 'XXL';
+    if(/XS|^S$|^M$|^L$|^XL$/.test(s)) return 'small';
+    return s;
+  }
+  // カラーグループ判定
+  function colorGroup(c){
+    if(!c) return '';
+    if(c.includes('ホワイト')||c.toLowerCase()==='white') return 'ホワイト';
+    if(c.includes('アッシュ')) return 'アッシュ';
+    if(c.includes('ヘザー')) return 'ヘザーカラー';
+    if(c.includes('ウッドランド')) return 'ウッドランド柄';
+    return 'カラー';
+  }
+
+  const sg = sizeGroup(sz);
+  const cg = colorGroup(cl);
+
+  let best = null, bestScore = -1;
+  for(const p of item.prices){
+    let score = 0;
+    const ps = p.size||'';
+    const pc = p.color||'';
+
+    // サイズスコア
+    if(!ps){ score+=3; }
+    else if(sg==='XXXL+'&&/XXXL/.test(ps)) score+=10;
+    else if(sg==='XXL'&&/^XXL/.test(ps)) score+=10;
+    else if(sg==='small'&&/XS|S\s*～|S\s*〜/.test(ps)) score+=10;
+    else if(sz&&ps===sz) score+=10;
+    else score+=0;
+
+    // カラースコア
+    if(!pc){ score+=2; }
+    else if(cg&&pc.includes(cg)) score+=5;
+    else if(cg==='カラー'&&!pc.includes('ホワイト')&&!pc.includes('アッシュ')&&!pc.includes('ヘザー')) score+=3;
+
+    if(score>bestScore){ bestScore=score; best=p; }
+  }
+  return best?best.retail:null;
+}
+
+function applyPrice(gId, rId, priceIdx){
+  const row = matGroups.flatMap(g=>g.rows).find(r=>r.id===rId);
+  if(!row) return;
+  const makerDB = PRICE_DB[row.maker];
+  if(!makerDB) return;
+  const found = findItemByCode(makerDB, (row.code||'').trim());
+  if(!found) return;
+  const item = found.item;
+  const p = item.prices[priceIdx];
+  if(!p) return;
+
+  row.retail = p.retail;
+  const retInput = document.getElementById('fi-retail-'+rId);
+  if(retInput) retInput.value = p.retail;
+
+  if(p.color && !row.color){
+    row.color = p.color;
+    const colorInput = document.getElementById('fi-color-'+rId);
+    if(colorInput) colorInput.value = p.color;
+  }
+
+  // 商品名をセット
+  row.prodName = item.name;
+  const nameEl = document.getElementById('fi-prodname-'+rId);
+  if(nameEl){ nameEl.textContent = item.name; nameEl.style.display=''; }
+
+  // カラータグを更新
+  const tagEl = document.getElementById('fi-colortag-'+rId);
+  if(tagEl){
+    if(p.color){ tagEl.textContent = p.color; tagEl.style.display=''; }
+    else { tagEl.textContent=''; tagEl.style.display='none'; }
+  }
+  // 具体的な色名（「カラー」系の汎用語以外）なら詳細カラーに自動入力
+  const genericColors = ['カラー','その他','mixed','other'];
+  if(p.color && !genericColors.includes(p.color)){
+    row.colorDetail = p.color;
+    const detailEl = document.getElementById('fi-colordetail-'+rId);
+    if(detailEl) detailEl.value = p.color;
+  }
+
+  closePopup(rId);
+  updateTotals();
+}
+
+function closePopup(rId){
+  const popup = document.getElementById('pp-'+rId);
+  if(popup) popup.innerHTML='';
+}
 function calcMatGroupTotal(g){return g.rows.reduce((s,r)=>s+calcMatRow(r),0);}
 function totalMat(){return matGroups.reduce((s,g)=>s+calcMatGroupTotal(g),0);}
 function getMatGrpLabel(g){return g.name==='その他（自由入力）'?(g.customName||'その他'):g.name||'（未設定）';}
@@ -606,31 +811,34 @@ function renderMatRow(gId,r){
   const discOpts=DISC_OPTIONS.map(d=>`<option value="${d.v}"${r.disc===d.v?' selected':''}>${d.l}</option>`).join('');
   const isCarryover=r.maker==='CARRYOVER';
   return `<div class="mat-row${cost>0?' has-val':''}" id="mrow-${r.id}">
+    <!-- 1行目：メーカー／品番／カラー／サイズ／ボタン -->
     <div class="mat-row-line0">
-      <select class="ms" onchange="uMatRow(${gId},${r.id},'maker',this.value)">${makerOpts}</select>
-      ${isCarryover?`<input id="fi-makercustom-${r.id}" class="maker-custom-input" type="text" placeholder="メーカー名を入力" value="${esc(r.makerCustom||'')}" oninput="uMatRow(${gId},${r.id},'makerCustom',this.value)">`:``}
-      <input id="fi-code-${r.id}" class="mi" type="text" placeholder="品番・品名" value="${esc(r.code)}" oninput="uMatRow(${gId},${r.id},'code',this.value)" style="font-size:12px;font-weight:600;flex:1;">
+      <select class="ms" style="width:22%;flex-shrink:0;" onchange="uMatRow(${gId},${r.id},'maker',this.value)">${makerOpts}</select>
+      ${isCarryover?`<input id="fi-makercustom-${r.id}" class="maker-custom-input" type="text" placeholder="メーカー名" value="${esc(r.makerCustom||'')}" oninput="uMatRow(${gId},${r.id},'makerCustom',this.value)">`:``}
+      <div class="price-popup-wrap" style="width:20%;flex-shrink:0;">
+        <input id="fi-code-${r.id}" class="mi" type="text" placeholder="品番" value="${esc(r.code)}" oninput="uMatRow(${gId},${r.id},'code',this.value)" onblur="lookupPrice(${gId},${r.id})" style="font-weight:600;">
+        <div id="pp-${r.id}" style="position:relative;"></div>
+      </div>
+      <span id="fi-colortag-${r.id}" class="color-group-tag" style="${r.color?'':'display:none'}">${esc(r.color||'')}</span>
+      <input id="fi-colordetail-${r.id}" class="mi" type="text" placeholder="詳細カラー（例：レッド）" value="${esc(r.colorDetail||'')}" oninput="uMatRow(${gId},${r.id},'colorDetail',this.value)" style="flex:1;min-width:0;">
+      <select class="ms" style="width:88px;flex-shrink:0;" onchange="uMatRow(${gId},${r.id},'size',this.value)">${sizeOpts}</select>
+      ${isOtherSize?`<input id="fi-szcustom-${r.id}" class="mi" type="text" placeholder="サイズ" value="${esc(r.sizeCustom||'')}" oninput="uMatRow(${gId},${r.id},'sizeCustom',this.value)" style="width:65px;">`:``}
       <div style="display:flex;gap:2px;flex-shrink:0;">
         <button class="dup-btn" title="この行を複製" onclick="dupMatRow(${gId},${r.id})">⧉</button>
         <button class="del-btn" onclick="delMatRow(${gId},${r.id})">✕</button>
       </div>
     </div>
+    <!-- 2行目：商品名 -->
+    <span id="fi-prodname-${r.id}" style="font-size:11px;color:var(--sub);padding:1px 4px 4px;display:${r.prodName?'block':'none'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(r.prodName||'')}</span>
+    <!-- 3行目：枚数／価格／割引 -->
     <div class="mat-row-line1">
-      <div><input id="fi-color-${r.id}" class="mi" type="text" placeholder="カラー名" value="${esc(r.color)}" oninput="uMatRow(${gId},${r.id},'color',this.value)" style="font-size:12px;"></div>
-      <div style="display:flex;align-items:center;gap:3px;">
-        <select class="ms" onchange="uMatRow(${gId},${r.id},'size',this.value)">${sizeOpts}</select>
-        ${isOtherSize?`<input id="fi-szcustom-${r.id}" class="mi" type="text" placeholder="サイズ入力" value="${esc(r.sizeCustom||'')}" oninput="uMatRow(${gId},${r.id},'sizeCustom',this.value)" style="width:70px;font-size:12px;">`:''}
-      </div>
-      <div style="display:flex;align-items:center;gap:3px;">
-        <input id="fi-qty-${r.id}" class="mi num" type="number" min="0" placeholder="0" style="flex:1" value="${r.qty||''}" oninput="uMatRow(${gId},${r.id},'qty',+this.value)">
-        <span style="font-size:11px;color:var(--sub)">枚</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:3px;">
-        <input id="fi-retail-${r.id}" class="mi num" type="number" min="0" placeholder="0" style="flex:1" value="${r.retail||''}" oninput="uMatRow(${gId},${r.id},'retail',+this.value)">
-        <span style="font-size:11px;color:var(--sub)">円</span>
-      </div>
-      <div><select id="fi-disc-${r.id}" class="ms" onchange="uMatRow(${gId},${r.id},'disc',+this.value)">${discOpts}</select></div>
+      <input id="fi-qty-${r.id}" class="mi num" type="number" min="0" placeholder="0" style="width:80px;" value="${r.qty||''}" oninput="uMatRow(${gId},${r.id},'qty',+this.value)">
+      <span style="font-size:11px;color:var(--sub);flex-shrink:0;">枚</span>
+      <input id="fi-retail-${r.id}" class="mi num" type="number" min="0" placeholder="0" style="width:100px;" value="${r.retail||''}" oninput="uMatRow(${gId},${r.id},'retail',+this.value)">
+      <span style="font-size:11px;color:var(--sub);flex-shrink:0;">円</span>
+      <select id="fi-disc-${r.id}" class="ms" style="width:110px;flex-shrink:0;" onchange="uMatRow(${gId},${r.id},'disc',+this.value)">${discOpts}</select>
     </div>
+    <!-- 4行目：計算結果 -->
     <div class="mat-row-line2">
       <span class="retail2" id="fi-retail2-${r.id}">${r.retail&&r.disc?`上代¥${r.retail.toLocaleString()}（${r.disc}%OFF）`:''}${unitStr?'　'+unitStr:''}</span>
       <span class="cost2" id="fi-res-${r.id}">${cost>0?'¥'+cost.toLocaleString():'—'}</span>
@@ -706,6 +914,19 @@ function uMatRow(gId,rId,key,val){
   const r=g.rows.find(r=>r.id===rId);if(!r)return;
   r[key]=val;
 
+  // 品番を手動変更したら商品名・価格・カラータグをクリア
+  if(key==='code'){
+    r.prodName=''; r.retail=0; r.color=''; r.colorDetail='';
+    const nameEl=document.getElementById('fi-prodname-'+rId);
+    if(nameEl){nameEl.textContent='';nameEl.style.display='none';}
+    const tagEl=document.getElementById('fi-colortag-'+rId);
+    if(tagEl){tagEl.textContent='';tagEl.style.display='none';}
+    const detailEl=document.getElementById('fi-colordetail-'+rId);
+    if(detailEl) detailEl.value='';
+    const retEl=document.getElementById('fi-retail-'+rId);
+    if(retEl) retEl.value='';
+  }
+
   function updateResCell(r){
     const cost=calcMatRow(r);
     const unitPrice=r.retail&&r.disc?(r.retail*(1-r.disc/100)):0;
@@ -773,13 +994,21 @@ function uMatRow(gId,rId,key,val){
   } else if(key==='retail'){
     updateResCell(r);
     refreshMatGrpHeader(gId);
-  } else if(key==='disc'||key==='size'||key==='maker'){
+  } else if(key==='disc'||key==='size'||key==='maker'||key==='color'){
     // メーカー変更時：新しいメーカーのサイズリストに現サイズがなければリセット
     if(key==='maker'){
       const newSizes=getSizesForMaker(val);
       if(!newSizes.find(s=>s.v===r.size))r.size=newSizes[0]?.v||'S';
       r.sizeCustom='';
       r.disc=getDefaultDisc(val);
+      r.retail=''; // メーカー変更時は上代リセット
+    }
+    // サイズ・カラー変更時：価格DBから自動で上代を更新
+    if(key==='size'||key==='color'){
+      const newRetail=autoLookupRetail(r);
+      if(newRetail!==null){
+        r.retail=newRetail;
+      }
     }
     const el=document.getElementById(`mrow-${rId}`);
     if(el){const t=document.createElement('div');t.innerHTML=renderMatRow(gId,r);el.replaceWith(t.firstElementChild);}
@@ -1104,7 +1333,7 @@ function renderGoodsGroup(g,idx){
   return `<div class="grp goods-grp" id="gg-${g.id}">
     <div class="grp-hdr">
       <span class="grp-num purple">${idx+1}</span>
-      <select class="proc-method-sel goods" style="min-width:210px" onchange="uGoodsType(${g.id},this.value)">${typeOpts}</select>
+      <select class="proc-method-sel goods" style="flex:1;min-width:0;" onchange="uGoodsType(${g.id},this.value)">${typeOpts}</select>
       <div class="grp-subtotal">
         <span class="grp-sub-val purple" id="fi-gres-${g.id}">${cost>0?'¥'+cost.toLocaleString():'—'}</span>
       </div>
@@ -1526,7 +1755,8 @@ function copyToClipboard(){
     g.rows.forEach(r=>{
       if(!r.qty&&!r.retail)return;
       const sizeLabel=r.size==='OTHER'?(r.sizeCustom||'その他'):r.size;
-      const colorSize=[r.color,sizeLabel].filter(Boolean).join('／');
+      const colorDisplay=r.colorDetail?((r.color?r.color+' ':'')+r.colorDetail):r.color;
+      const colorSize=[colorDisplay,sizeLabel].filter(Boolean).join('／');
       const makerLabel=r.maker==='CARRYOVER'?(r.makerCustom||'持ち込み'):(MAKERS.find(m=>m.v===r.maker)||{l:''}).l;
       const makerStr=makerLabel?`${makerLabel}　`:'';
       const codeStr=code?`${code}　`:'';
