@@ -89,30 +89,29 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 .mat-row:focus-within{border-color:rgba(64,223,171,.5);background:var(--green-bg);}
 .mat-row.has-val{border-color:rgba(64,223,171,.3);background:var(--green-bg);}
 .mat-row-line0{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
-.mr-maker{width:22%;flex-shrink:0;}
-.mr-code{width:20%;flex-shrink:0;}
-.mr-btns{display:flex;gap:2px;flex-shrink:0;}
 .mat-row-line0b{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
-.mr-colordetail{flex:1;min-width:0;}
-.mr-size{width:88px;flex-shrink:0;}
-.mr-szcustom{width:65px;}
+.mat-row-line1{display:flex;gap:6px;align-items:center;justify-content:flex-start;margin-top:4px;}
+.mat-row-line2{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding-top:5px;margin-top:5px;border-top:1px solid #eef0f3;}
+.mat-row-line2 .retail2{font-size:12px;color:var(--sub);white-space:nowrap;}
+.mat-row-line2 .cost2{font-size:15px;font-weight:800;color:var(--green-dk);white-space:nowrap;}
+.mat-row .mr-maker{width:22%;flex-shrink:0;}
+.mat-row .mr-code{width:20%;flex-shrink:0;}
+.mat-row .mr-btns{display:flex;gap:2px;flex-shrink:0;}
+.mat-row .mr-colordetail{flex:1;min-width:0;width:auto;}
+.mat-row .mr-size{width:88px;flex-shrink:0;}
+.mat-row .mr-szcustom{width:65px;}
+.mat-row .mr-qty{width:80px;}
+.mat-row .mr-retail{width:100px;}
+.mat-row .mr-disc{width:110px;flex-shrink:0;}
+.mr-unit{font-size:11px;color:var(--sub);flex-shrink:0;}
 .mr-prodname{font-size:11px;color:var(--sub);padding:1px 4px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .mat-row-line0 .maker-custom-input{width:18%;flex-shrink:0;font-size:12px;padding:5px 6px;border:1.5px solid var(--border);border-radius:7px;outline:none;font-family:inherit;background:#fff;}
 .mat-row-line0 .maker-custom-input:focus{border-color:var(--green);}
-.mat-row-line0 .mi{flex:1;}
 .color-detail-wrap{display:flex;gap:4px;align-items:center;}
 .color-detail-input{font-size:12px;padding:5px 6px;border:1.5px solid var(--border);border-radius:7px;outline:none;background:#fff;transition:.15s;flex:1;min-width:0;}
 .color-detail-input:focus{border-color:var(--green);}
 .color-detail-input::placeholder{color:#aaa;}
 .color-group-tag{font-size:11px;color:#fff;background:var(--green);border-radius:5px;padding:3px 9px;white-space:nowrap;flex-shrink:0;font-weight:600;}
-.mat-row-line1{display:flex;gap:6px;align-items:center;justify-content:flex-start;margin-top:4px;}
-.mr-qty{width:80px;}
-.mr-retail{width:100px;}
-.mr-disc{width:110px;flex-shrink:0;}
-.mr-unit{font-size:11px;color:var(--sub);flex-shrink:0;}
-.mat-row-line2{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding-top:5px;margin-top:5px;border-top:1px solid #eef0f3;}
-.mat-row-line2 .retail2{font-size:12px;color:var(--sub);white-space:nowrap;}
-.mat-row-line2 .cost2{font-size:15px;font-weight:800;color:var(--green-dk);white-space:nowrap;}
 
 .grp-body-disabled{background:#f8f8f8;border-radius:0 0 10px 10px;padding:14px;}
 .grp-disabled-msg{text-align:center;font-size:13px;color:#b0b8c4;font-weight:600;padding:4px 0;}
@@ -215,15 +214,15 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 .export-btn:disabled{opacity:.5;cursor:not-allowed;}
 
 /* 価格検索ポップアップ */
-.price-popup{position:absolute;z-index:300;background:#fff;border:1.5px solid var(--green);border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.15);padding:10px;left:0;min-width:320px;box-sizing:border-box;top:calc(100% + 2px);}
+.mr-popup-slot{} /* ポップアップの挿入スロット */
+.price-popup{position:relative;background:#fff;border:1.5px solid var(--green);border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.15);padding:10px;margin:6px 0;box-sizing:border-box;z-index:300;}
 .price-popup-title{font-size:11px;color:var(--sub);margin-bottom:6px;line-height:1.4;padding-right:16px;word-break:break-all;}
-.price-popup-list{display:flex;flex-direction:column;gap:4px;max-height:180px;overflow-y:auto;}
+.price-popup-list{display:flex;flex-direction:column;gap:4px;max-height:200px;overflow-y:auto;}
 .price-popup-item{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;border-radius:6px;border:1.5px solid var(--border);cursor:pointer;transition:.15s;gap:8px;}
 .price-popup-item:hover{border-color:var(--green);background:#f0faf5;}
 .price-popup-item .pi-label{font-size:12px;color:#333;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .price-popup-item .pi-price{font-size:13px;font-weight:800;color:var(--green-dk);white-space:nowrap;flex-shrink:0;}
 .price-popup-close{position:absolute;top:6px;right:8px;font-size:16px;color:var(--sub);cursor:pointer;line-height:1;}
-.price-popup-wrap{position:relative;min-width:0;}
 @media(max-width:640px){
   .sum-footer-inner{
     grid-template-columns:1fr;padding:14px 16px 14px;gap:10px;
@@ -243,48 +242,35 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 
   /* ─── 素材行line0：メーカー＋品番＋ボタン ─── */
   .mat-row-line0{gap:5px;}
-  .mr-maker{width:38%;font-size:13px;padding:7px 6px;}
-  .mr-code{width:calc(62% - 60px);flex-shrink:1;}
-  .mr-code .mi{font-size:14px;padding:7px 8px;}
-  .mr-btns{flex-shrink:0;}
+  .mat-row .mr-maker{width:38%;font-size:13px;padding:7px 6px;}
+  .mat-row .mr-code{width:calc(62% - 60px);flex-shrink:1;}
+  .mat-row .mr-code .mi{font-size:14px;padding:7px 8px;}
+  .mat-row .mr-btns{flex-shrink:0;}
   .mat-row-line0 .maker-custom-input{width:calc(62% - 60px) !important;font-size:13px;padding:7px 6px;}
 
   /* ─── 素材行line0b：カラー＋サイズ ─── */
   .mat-row-line0b{gap:5px;}
-  .mr-colordetail{font-size:13px;padding:7px 8px;flex:1;min-width:60px;}
-  .mr-size{width:30%;font-size:13px;padding:7px 6px;}
-  .mr-szcustom{width:60px;font-size:13px;padding:7px 6px;}
+  .mat-row .mr-colordetail{font-size:13px;padding:7px 8px;flex:1;min-width:60px;width:auto;}
+  .mat-row .mr-size{width:30%;font-size:13px;padding:7px 6px;}
+  .mat-row .mr-szcustom{width:60px;font-size:13px;padding:7px 6px;}
   .color-group-tag{font-size:10px;padding:2px 7px;}
 
   /* ─── 素材行line1：枚数・価格・割引 ─── */
   .mat-row-line1{flex-wrap:wrap;gap:5px;}
-  .mr-qty{width:70px;font-size:14px;padding:7px 8px;}
-  .mr-retail{width:90px;font-size:14px;padding:7px 8px;}
-  .mr-disc{width:100px;font-size:13px;padding:7px 6px;}
+  .mat-row .mr-qty{width:70px;font-size:14px;padding:7px 8px;}
+  .mat-row .mr-retail{width:90px;font-size:14px;padding:7px 8px;}
+  .mat-row .mr-disc{width:100px;font-size:13px;padding:7px 6px;}
 
   /* ─── 商品名 ─── */
   .mr-prodname{white-space:normal !important;line-height:1.3;}
 
-  /* ─── 価格ポップアップ：スマホは画面下部に固定表示 ─── */
-  .price-popup{
-    position:fixed !important;
-    left:12px !important;
-    right:12px !important;
-    bottom:70px !important;
-    top:auto !important;
-    width:auto !important;
-    min-width:unset !important;
-    max-width:none !important;
-    max-height:50vh;
-    z-index:400;
-    box-shadow:0 -4px 24px rgba(0,0,0,.2),0 4px 20px rgba(0,0,0,.15);
-    border-radius:14px;
-  }
+  /* ─── 価格ポップアップ：スマホ ─── */
+  .price-popup{margin:6px 0;}
   .price-popup-title{font-size:13px;white-space:normal;word-break:break-all;padding-right:24px;}
   .price-popup-list{max-height:40vh;overflow-y:auto;-webkit-overflow-scrolling:touch;}
-  .price-popup-item{padding:12px 14px;}
-  .price-popup-item .pi-label{font-size:14px;}
-  .price-popup-item .pi-price{font-size:15px;}
+  .price-popup-item{padding:10px 12px;}
+  .price-popup-item .pi-label{font-size:13px;}
+  .price-popup-item .pi-price{font-size:14px;}
   .price-popup-close{font-size:20px;top:8px;right:10px;}
 
   /* ─── 加工行：スマホ ─── */
@@ -886,15 +872,16 @@ function renderMatRow(gId,r){
     <div class="mat-row-line0">
       <select class="ms mr-maker" onchange="uMatRow(${gId},${r.id},'maker',this.value)">${makerOpts}</select>
       ${isCarryover?`<input id="fi-makercustom-${r.id}" class="maker-custom-input" type="text" placeholder="メーカー名" value="${esc(r.makerCustom||'')}" oninput="uMatRow(${gId},${r.id},'makerCustom',this.value)">`:``}
-      <div class="price-popup-wrap mr-code">
+      <div class="mr-code">
         <input id="fi-code-${r.id}" class="mi" type="text" placeholder="品番" value="${esc(r.code)}" oninput="uMatRow(${gId},${r.id},'code',this.value)" onblur="lookupPrice(${gId},${r.id})" style="font-weight:600;">
-        <div id="pp-${r.id}" style="position:relative;"></div>
       </div>
       <div class="mr-btns">
         <button class="dup-btn" title="この行を複製" onclick="dupMatRow(${gId},${r.id})">⧉</button>
         <button class="del-btn" onclick="delMatRow(${gId},${r.id})">✕</button>
       </div>
     </div>
+    <!-- ポップアップ（品番入力の直下にフロー表示） -->
+    <div id="pp-${r.id}" class="mr-popup-slot"></div>
     <!-- 2段目：カラー／サイズ -->
     <div class="mat-row-line0b">
       <span id="fi-colortag-${r.id}" class="color-group-tag" style="${r.color?'':'display:none'}">${esc(r.color||'')}</span>
