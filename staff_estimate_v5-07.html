@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Factory ant｜スタッフ見積ツール</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -238,6 +238,9 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 
   /* ヘッダー：スマホ */
   .hdr{padding:10px 16px;}
+
+  /* iOS自動ズーム防止：全input/selectを16px以上に */
+  .mi,.ms,.fi,.pl-label,.pl-num,.pl-sel,.gs,.gn{font-size:16px !important;}
 
   /* ─── 全体の余白調整 ─── */
   .wrap{padding:12px 8px 160px;}
