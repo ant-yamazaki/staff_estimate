@@ -19,17 +19,13 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 
 
 /* ─── ヘッダー ─── */
-.hdr{position:sticky;top:0;z-index:100;background:linear-gradient(135deg,#0d1b2a 0%,#1c3347 100%);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 18px rgba(0,0,0,.3);transition:transform .25s ease;}
+.hdr{position:sticky;top:0;z-index:100;background:linear-gradient(135deg,#0d1b2a 0%,#1c3347 100%);padding:12px 20px;display:flex;align-items:center;box-shadow:0 4px 18px rgba(0,0,0,.3);transition:transform .25s ease;}
 .hdr.hdr-hidden{transform:translateY(-100%);}
-.hdr-logo{display:flex;align-items:center;gap:8px;}
-.hdr-logo-img{height:28px;width:auto;object-fit:contain;}
+.hdr-logo{display:flex;align-items:center;gap:10px;}
+.hdr-logo-link{display:flex;align-items:center;flex-shrink:0;}
+.hdr-logo-img{height:40px;width:auto;object-fit:contain;}
 .hdr-badge{background:var(--green);color:#fff;font-size:9px;font-weight:900;padding:2px 7px;border-radius:3px;letter-spacing:.1em;}
-.hdr-title{color:#fff;font-size:15px;font-weight:700;}
-.hdr-sub{color:rgba(255,255,255,.4);font-size:11px;margin-left:2px;}
-.hdr-total{display:flex;align-items:baseline;gap:3px;background:var(--green);border-radius:20px;padding:6px 16px;box-shadow:0 3px 12px rgba(64,223,171,.4);}
-.hdr-total .cur{color:#fff;font-size:12px;font-weight:700;}
-.hdr-total .amt{color:#fff;font-size:20px;font-weight:900;letter-spacing:-1px;}
-.hdr-total .suf{color:rgba(255,255,255,.75);font-size:10px;}
+.hdr-sub{color:rgba(255,255,255,.5);font-size:12px;font-weight:600;}
 
 /* ─── レイアウト ─── */
 .wrap{max-width:960px;margin:0 auto;padding:18px 14px 80px;}
@@ -240,8 +236,7 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
   .sr.grand .sv{font-size:24px;}
   .export-btn{padding:6px 10px;font-size:11px;}
 
-  /* ヘッダー：スマホで金額バッジ非表示 */
-  .hdr-total{display:none;}
+  /* ヘッダー：スマホ */
   .hdr{padding:10px 16px;}
 
   /* ─── 全体の余白調整 ─── */
@@ -402,14 +397,9 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 
 <header class="hdr">
   <div class="hdr-logo">
+    <a href="https://factory-ant.jp" class="hdr-logo-link"><img class="hdr-logo-img" src="https://ant-yamazaki.github.io/staff_estimate/Factory ant_rogo.png" alt="Factory ant"></a>
     <span class="hdr-badge">STAFF</span>
-    <img class="hdr-logo-img" src="https://ant-yamazaki.github.io/staff_estimate/Factory ant_rogo.png" alt="Factory ant">
     <span class="hdr-sub">複合見積</span>
-  </div>
-  <div class="hdr-total">
-    <span class="cur">¥</span>
-    <span class="amt" id="hdrAmt">0</span>
-    <span class="suf">税込</span>
   </div>
 </header>
 
@@ -1744,7 +1734,6 @@ function updateTotals(){
   document.getElementById('goodsBadge').textContent=f(goods);
   document.getElementById('goodsTotal').textContent=f(goods);
   document.getElementById('matQtyNote').textContent=totalQty>0?`合計 ${totalQty}枚 ／`:'';
-  document.getElementById('hdrAmt').textContent=grand.toLocaleString();
   renderExtraOpts();
 
   // 左列：内訳
