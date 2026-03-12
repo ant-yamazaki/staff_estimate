@@ -19,8 +19,10 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 
 
 /* ─── ヘッダー ─── */
-.hdr{position:sticky;top:0;z-index:100;background:linear-gradient(135deg,#0d1b2a 0%,#1c3347 100%);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 18px rgba(0,0,0,.3);}
+.hdr{position:sticky;top:0;z-index:100;background:linear-gradient(135deg,#0d1b2a 0%,#1c3347 100%);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 18px rgba(0,0,0,.3);transition:transform .25s ease;}
+.hdr.hdr-hidden{transform:translateY(-100%);}
 .hdr-logo{display:flex;align-items:center;gap:8px;}
+.hdr-logo-img{height:28px;width:auto;object-fit:contain;}
 .hdr-badge{background:var(--green);color:#fff;font-size:9px;font-weight:900;padding:2px 7px;border-radius:3px;letter-spacing:.1em;}
 .hdr-title{color:#fff;font-size:15px;font-weight:700;}
 .hdr-sub{color:rgba(255,255,255,.4);font-size:11px;margin-left:2px;}
@@ -34,11 +36,12 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 
 /* ─── メモカード ─── */
 .memo{background:var(--card);border-radius:12px;padding:12px 16px;margin-bottom:14px;box-shadow:var(--shadow);border-left:3px solid var(--green);}
-.memo-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+.memo-row{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;}
+.memo-row+.memo-row{margin-top:8px;}
 .fl{font-size:11px;font-weight:700;color:var(--sub);white-space:nowrap;}
 .fi{border:1.5px solid var(--border);border-radius:7px;padding:5px 9px;font-size:13px;font-family:inherit;outline:none;background:#fafafa;color:var(--text);transition:.15s;}
 .fi:focus{border-color:var(--green);background:#fff;box-shadow:0 0 0 3px rgba(64,223,171,.12);}
-.fi.nm{width:170px;}.fi.dt{width:135px;}.fi.nt{flex:1;min-width:180px;}
+.fi.nm{flex:1;min-width:140px;}.fi.dt{width:135px;}.fi.nt{flex:1;min-width:140px;}
 
 /* ─── セクションカード ─── */
 .sec{background:var(--card);border-radius:14px;margin-bottom:12px;box-shadow:var(--shadow);overflow:hidden;}
@@ -49,6 +52,9 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 .sec-ttl{font-size:14px;font-weight:700;}
 .sec-badge{margin-left:auto;font-size:11px;font-weight:700;color:var(--green-dk);background:var(--green-pale);padding:2px 8px;border-radius:6px;}
 .sec-badge.blue{color:#2d60d4;background:var(--blue-pale);}
+.sec-hdr-toggle{cursor:pointer;user-select:none;transition:.15s;}
+.sec-hdr-toggle:hover{background:#f0f2f5;}
+.sec-arrow{margin-left:auto;font-size:10px;color:var(--sub);transition:transform .2s;}
 .sec-body{padding:12px 16px;}
 
 /* ─── 共通グループカード ─── */
@@ -184,7 +190,7 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
   max-width:1080px;margin:0 auto;padding:24px 24px 24px;
   display:grid;grid-template-columns:1fr auto 1fr;grid-template-rows:auto auto;align-items:start;gap:16px;
 }
-.sum-footer-actions{display:flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;flex-shrink:0;grid-column:1/-1;margin-top:4px;}
+.sum-footer-actions{display:flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;flex-shrink:0;grid-column:1/-1;margin-top:10px;}
 .sum-rows{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
 .sum-col-left{display:flex;flex-direction:column;gap:4px;}
 .sum-col-center{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:320px;}
@@ -225,14 +231,18 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 .price-popup-close{position:absolute;top:6px;right:8px;font-size:16px;color:var(--sub);cursor:pointer;line-height:1;}
 @media(max-width:640px){
   .sum-footer-inner{
-    grid-template-columns:1fr;padding:14px 16px 14px;gap:10px;
+    grid-template-columns:1fr;padding:10px 16px 10px;gap:6px;
   }
-  .sum-col-left{flex-direction:row;flex-wrap:wrap;gap:8px 14px;order:1;}
-  .sum-col-center{min-width:unset;order:2;}
-  .sum-col-right{flex-direction:row;flex-wrap:wrap;gap:8px 14px;align-items:flex-start;order:3;}
-  .sum-footer-actions{order:4;}
-  .sr.grand .sv{font-size:26px;}
+  .sum-col-left{display:none !important;}
+  .sum-col-right{display:none !important;}
+  .sum-col-center{min-width:unset;order:1;}
+  .sum-footer-actions{order:2;margin-top:2px;}
+  .sr.grand .sv{font-size:24px;}
   .export-btn{padding:6px 10px;font-size:11px;}
+
+  /* ヘッダー：スマホで金額バッジ非表示 */
+  .hdr-total{display:none;}
+  .hdr{padding:10px 16px;}
 
   /* ─── 全体の余白調整 ─── */
   .wrap{padding:12px 8px 160px;}
@@ -393,7 +403,7 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 <header class="hdr">
   <div class="hdr-logo">
     <span class="hdr-badge">STAFF</span>
-    <span class="hdr-title">Factory ant</span>
+    <img class="hdr-logo-img" src="https://ant-yamazaki.github.io/staff_estimate/Factory ant_rogo.png" alt="Factory ant">
     <span class="hdr-sub">複合見積</span>
   </div>
   <div class="hdr-total">
@@ -410,6 +420,8 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
     <div class="memo-row">
       <span class="fl">顧客名</span>
       <input class="fi nm" type="text" placeholder="〇〇様 / 〇〇株式会社" id="mClient">
+    </div>
+    <div class="memo-row">
       <span class="fl">日付</span>
       <input class="fi dt" type="date" id="mDate">
       <span class="fl">メモ</span>
@@ -465,22 +477,22 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 
     <!-- ③ プリントオプション -->
     <div class="sec" id="optionSec" style="display:none;">
-      <div class="sec-hdr">
+      <div class="sec-hdr sec-hdr-toggle" onclick="toggleSecBody('optBody')">
         <div class="sec-icon" style="background:linear-gradient(135deg,#fef3e0,#fde0a8);">✨</div>
         <span class="sec-ttl">③ プリントオプション</span>
-        <span class="sec-badge" style="color:#c07a00;background:#fff8e6;" id="optBadge">¥0</span>
+        <span class="sec-arrow" id="optBodyArrow">▼</span>
       </div>
-      <div class="sec-body" id="optionBody"></div>
+      <div class="sec-body" id="optionBody" style="display:none;"></div>
     </div>
 
     <!-- ④ オプション -->
     <div class="sec">
-      <div class="sec-hdr">
+      <div class="sec-hdr sec-hdr-toggle" onclick="toggleSecBody('extraBody')">
         <div class="sec-icon" style="background:linear-gradient(135deg,#f0e8ff,#ddd0ff);">📦</div>
         <span class="sec-ttl">④ オプション</span>
-        <span class="sec-badge" style="color:#6a35c0;background:#f3eeff;" id="extraOptBadge">¥0</span>
+        <span class="sec-arrow" id="extraBodyArrow">▼</span>
       </div>
-      <div class="sec-body">
+      <div class="sec-body" id="extraOptBodyWrap" style="display:none;">
         <div style="display:flex;flex-direction:column;gap:6px;" id="extraOptBody"></div>
       </div>
     </div>
@@ -520,7 +532,7 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
       <div id="unitNote" style="color:rgba(255,255,255,.35);font-size:11px;"></div>
     </div>
     <div class="sum-col-right" id="sumColRight"></div>
-    <div class="sum-footer-actions" style="margin-top:10px;">
+    <div class="sum-footer-actions">
       <button class="export-btn copy" id="copyBtn" onclick="copyToClipboard()">📋 テキストをコピー</button>
       <button class="export-btn img" id="imgBtn" onclick="saveAsImage()">🖼 画像で保存</button>
       <button class="export-btn reset" onclick="resetAll()">↺ 全リセット</button>
@@ -891,13 +903,13 @@ function renderMatRow(gId,r){
     </div>
     <!-- 3段目：商品名 -->
     <span id="fi-prodname-${r.id}" class="mr-prodname" style="display:${r.prodName?'block':'none'}">${esc(r.prodName||'')}</span>
-    <!-- 4段目：枚数／価格／割引 -->
+    <!-- 4段目：価格／割引／枚数 -->
     <div class="mat-row-line1">
-      <input id="fi-qty-${r.id}" class="mi num mr-qty" type="number" min="0" placeholder="0" value="${r.qty||''}" oninput="uMatRow(${gId},${r.id},'qty',+this.value)">
-      <span class="mr-unit">枚</span>
-      <input id="fi-retail-${r.id}" class="mi num mr-retail" type="number" min="0" placeholder="0" value="${r.retail||''}" oninput="uMatRow(${gId},${r.id},'retail',+this.value)">
+      <input id="fi-retail-${r.id}" class="mi num mr-retail" type="number" min="0" placeholder="上代" value="${r.retail||''}" oninput="uMatRow(${gId},${r.id},'retail',+this.value)">
       <span class="mr-unit">円</span>
       <select id="fi-disc-${r.id}" class="ms mr-disc" onchange="uMatRow(${gId},${r.id},'disc',+this.value)">${discOpts}</select>
+      <input id="fi-qty-${r.id}" class="mi num mr-qty" type="number" min="0" placeholder="0" value="${r.qty||''}" oninput="uMatRow(${gId},${r.id},'qty',+this.value)">
+      <span class="mr-unit">枚</span>
     </div>
     <!-- 5段目：計算結果 -->
     <div class="mat-row-line2">
@@ -1728,8 +1740,6 @@ function updateTotals(){
   document.getElementById('procBadge').textContent=f(proc);
   document.getElementById('matTotal').textContent=f(mat);
   document.getElementById('procTotal').textContent=f(proc);
-  document.getElementById('optBadge').textContent=f(opt);
-  document.getElementById('extraOptBadge').textContent=f(extra);
   document.getElementById('apparelBadge').textContent=f(apparel);
   document.getElementById('goodsBadge').textContent=f(goods);
   document.getElementById('goodsTotal').textContent=f(goods);
@@ -1794,6 +1804,17 @@ function toggleBlk(id){
   const isHidden=block.style.display==='none';
   block.style.display=isHidden?'':'none';
   arrow.textContent=isHidden?'▲':'▼';
+}
+
+/* セクションボディの開閉（③プリントオプション・④オプション） */
+function toggleSecBody(id){
+  const map={optBody:'optionBody',extraBody:'extraOptBodyWrap'};
+  const body=document.getElementById(map[id]||id);
+  const arrow=document.getElementById(id+'Arrow');
+  if(!body)return;
+  const isHidden=body.style.display==='none';
+  body.style.display=isHidden?'':'none';
+  if(arrow)arrow.textContent=isHidden?'▲':'▼';
 }
 
 /* ================================================================
@@ -2010,6 +2031,29 @@ addProcGroup();
 renderOptions();
 renderExtraOpts();
 renderGoodsGroups();
+
+/* ================================================================
+   ヘッダー auto-hide（下スクロールで隠れ、上スクロールで戻る）
+================================================================ */
+(function(){
+  const hdr=document.querySelector('.hdr');
+  let lastY=0, ticking=false;
+  const threshold=8; // 感度（px）
+  window.addEventListener('scroll',function(){
+    if(ticking)return;
+    ticking=true;
+    requestAnimationFrame(function(){
+      const y=window.scrollY;
+      if(y>lastY+threshold&&y>60){
+        hdr.classList.add('hdr-hidden');
+      }else if(y<lastY-threshold||y<=10){
+        hdr.classList.remove('hdr-hidden');
+      }
+      lastY=y;
+      ticking=false;
+    });
+  },{passive:true});
+})();
 </script>
 </body>
 </html>
