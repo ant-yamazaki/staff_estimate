@@ -1008,6 +1008,8 @@ function renderMatRow(gId,r){
         <button class="del-btn" onclick="delMatRow(${gId},${r.id})">✕</button>
       </div>
     </div>
+    <!-- 商品名（メーカー/品番の直下） -->
+    <span id="fi-prodname-${r.id}" class="mr-prodname" style="display:${r.prodName?'block':'none'}">${esc(r.prodName||'')}</span>
     <!-- ポップアップ（品番入力の直下にフロー表示） -->
     <div id="pp-${r.id}" class="mr-popup-slot"></div>
     <!-- 2段目：カラー／サイズ -->
@@ -1017,8 +1019,6 @@ function renderMatRow(gId,r){
       <select class="ms mr-size" onchange="uMatRow(${gId},${r.id},'size',this.value)">${sizeOpts}</select>
       ${isOtherSize?`<input id="fi-szcustom-${r.id}" class="mi mr-szcustom" type="text" placeholder="サイズ" value="${esc(r.sizeCustom||'')}" oninput="uMatRow(${gId},${r.id},'sizeCustom',this.value)">`:``}
     </div>
-    <!-- 3段目：商品名 -->
-    <span id="fi-prodname-${r.id}" class="mr-prodname" style="display:${r.prodName?'block':'none'}">${esc(r.prodName||'')}</span>
     <!-- 4段目：価格／割引／枚数 -->
     <div class="mat-row-line1">
       <input id="fi-retail-${r.id}" class="mi num mr-retail" type="number" min="0" placeholder="上代" value="${r.retail||''}" oninput="uMatRow(${gId},${r.id},'retail',+this.value)">
@@ -1103,17 +1103,23 @@ function uMatRow(gId,rId,key,val){
   const r=g.rows.find(r=>r.id===rId);if(!r)return;
   r[key]=val;
 
-  // 品番を手動変更したら商品名・価格・カラータグをクリア
+  // 品番を手動変更したら商品名・価格・カラータグをクリア（DB登録メーカーのみ）
   if(key==='code'){
-    r.prodName=''; r.retail=0; r.color=''; r.colorDetail='';
-    const nameEl=document.getElementById('fi-prodname-'+rId);
-    if(nameEl){nameEl.textContent='';nameEl.style.display='none';}
-    const tagEl=document.getElementById('fi-colortag-'+rId);
-    if(tagEl){tagEl.textContent='';tagEl.style.display='none';}
-    const detailEl=document.getElementById('fi-colordetail-'+rId);
-    if(detailEl) detailEl.value='';
-    const retEl=document.getElementById('fi-retail-'+rId);
-    if(retEl) retEl.value='';
+    const hasDB=!!PRICE_DB[r.maker]; // UA/TOMS/TRのみtrue
+    if(hasDB){
+      r.prodName=''; r.retail=0; r.color=''; r.colorDetail='';
+      const nameEl=document.getElementById('fi-prodname-'+rId);
+      if(nameEl){nameEl.textContent='';nameEl.style.display='none';}
+      const tagEl=document.getElementById('fi-colortag-'+rId);
+      if(tagEl){tagEl.textContent='';tagEl.style.display='none';}
+      const detailEl=document.getElementById('fi-colordetail-'+rId);
+      if(detailEl) detailEl.value='';
+      const retEl=document.getElementById('fi-retail-'+rId);
+      if(retEl) retEl.value='';
+      // 計算結果とグループヘッダーも更新
+      updateResCell(r);
+      refreshMatGrpHeader(gId);
+    }
   }
 
   function updateResCell(r){
@@ -2178,7 +2184,8 @@ function copyToClipboard(){
       const makerLabel=r.maker==='CARRYOVER'?(r.makerCustom||'持ち込み'):(MAKERS.find(m=>m.v===r.maker)||{l:''}).l;
       const makerStr=makerLabel?`${makerLabel}　`:'';
       const codeStr=code?`${code}　`:'';
-      push(`${grpLabel}　${makerStr}${codeStr}${colorSize}`,r.qty||0,'枚',r.retail||0);
+      const prodStr=r.prodName?`${r.prodName}　`:'';
+      push(`${grpLabel}　${makerStr}${codeStr}${prodStr}${colorSize}`,r.qty||0,'枚',r.retail||0);
       matHasContent=true;
     });
 
