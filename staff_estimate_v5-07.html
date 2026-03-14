@@ -131,6 +131,7 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 .proc-line-bottom{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding-top:5px;margin-top:5px;border-top:1px solid #e8edf5;}
 .proc-line-bottom .cost2b{font-size:15px;font-weight:800;color:var(--blue);white-space:nowrap;flex-shrink:0;}
 .proc-line-bottom .detail2b{font-size:12px;color:var(--sub);white-space:nowrap;}
+.proc-line-bottom .dup-warn-proc{font-size:11px;color:#e07000;font-weight:600;margin-right:auto;}
 
 /* 共通 input/select */
 .mi,.ms{border:1.5px solid var(--border);border-radius:7px;padding:5px 6px;font-size:12px;font-family:inherit;outline:none;background:#fff;transition:.15s;width:100%;}
@@ -1266,6 +1267,33 @@ function checkAllDupWarnings(){
   matGroups.forEach(g=>checkDupWarnings(g.id));
 }
 
+/* 同一加工グループ内のカ所重複チェック */
+function checkProcDupWarnings(gId){
+  const g=procGroups.find(g=>g.id===gId);if(!g)return;
+  if(g.method==='manual') return; // 手入力はチェックしない
+  const map={};
+  g.lines.forEach(l=>{
+    const loc=l.labelPreset||'';
+    if(!loc) return; // カ所未選択は判定しない
+    // 刺繍は品目+カ所で判定
+    const key=g.method==='embroidery'?(l.embType||'')+'\t'+loc:loc;
+    if(!map[key])map[key]=[];
+    map[key].push(l.id);
+  });
+  const dupIds=new Set();
+  Object.values(map).forEach(ids=>{
+    if(ids.length>=2) ids.forEach(id=>dupIds.add(id));
+  });
+  g.lines.forEach(l=>{
+    const el=document.getElementById('fi-pdup-'+l.id);
+    if(!el)return;
+    el.textContent=dupIds.has(l.id)?'⚠ 同じカ所が重複しています':'';
+  });
+}
+function checkAllProcDupWarnings(){
+  procGroups.forEach(g=>checkProcDupWarnings(g.id));
+}
+
 /* ================================================================
    加工グループ 描画
 ================================================================ */
@@ -1427,6 +1455,7 @@ function renderProcLine(g,l){
     ${locPending
       ?`<div style="text-align:center;font-size:12px;color:#b0b8c4;font-weight:600;padding:4px 0;">👆 カ所を選択してください</div>`
       :`<div class="proc-line-bottom">
+        <span class="dup-warn-proc" id="fi-pdup-${l.id}"></span>
         <span class="detail2b" id="fi-punit-${l.id}">${detailStr}</span>
         <span class="cost2b" id="fi-pres-${l.id}">${cost>0?'¥'+cost.toLocaleString():err&&err!=='枚数0'?'⚠ '+err:'—'}</span>
       </div>`}
@@ -1444,18 +1473,10 @@ function delProcGroup(id){
 }
 function uProcGrpMethod(id,val){
   const g=procGroups.find(g=>g.id===id);if(!g)return;
-  const wasEmpty=!g.method;
   g.method=val;
-  if(wasEmpty||val===''){
-    g.lines=[defaultProcLine(val)];
-    g.dataFee=0;
-  } else {
-    g.lines.forEach(l=>{delete l.colors;delete l.size;delete l.manualPrice;delete l.embType;delete l.stitchCount;
-      if(val==='screen')l.colors=2;
-      else if(val==='embroidery'){l.embType='emb_normal';l.stitchCount=0;}
-      else if(val!=='manual')l.size=315;});
-    if(val!=='embroidery') g.dataFee=0;
-  }
+  // 加工方法変更→linesを常にリセット（カ所・設定をクリア）
+  g.lines=[defaultProcLine(val)];
+  if(val!=='embroidery') g.dataFee=0;
   const el=document.getElementById(`pg-${id}`);
   if(el){const t=document.createElement('div');t.innerHTML=renderProcGroup(g,procGroups.indexOf(g));el.replaceWith(t.firstElementChild);}
   renderOptions();updateTotals();
@@ -2129,6 +2150,7 @@ function updateTotals(){
   renderOptions();
   renderExtraOpts();
   checkAllDupWarnings();
+  checkAllProcDupWarnings();
 
   // 左列：内訳
   let left='';
