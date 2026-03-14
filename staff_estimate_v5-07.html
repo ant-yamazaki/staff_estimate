@@ -1048,7 +1048,8 @@ function dupMatRow(gId,rId){
   const g=matGroups.find(g=>g.id===gId);if(!g)return;
   const r=g.rows.find(r=>r.id===rId);if(!r)return;
   const idx=g.rows.indexOf(r);
-  const dup={...r, id:++mid, size:'', sizeCustom:''};
+  // 品番・メーカー・商品名・詳細カラー・割引率を維持、サイズ・上代・枚数・カラータグをリセット
+  const dup={...r, id:++mid, size:'', sizeCustom:'', retail:0, qty:0, color:''};
   g.rows.splice(idx+1,0,dup);
   const container=document.getElementById(`mr-${gId}`);
   if(container){
@@ -1446,7 +1447,10 @@ function dupProcLine(gId,lId){
   const g=procGroups.find(g=>g.id===gId);if(!g)return;
   const idx=g.lines.findIndex(l=>l.id===lId);if(idx<0)return;
   const orig=g.lines[idx];
-  const dup={...orig,id:++plid,qtyManual:orig.qtyManual||0,labelCustom:orig.labelCustom||''};
+  // カ所をリセット（→「カ所を選択してください」状態）、その他の設定は維持
+  const dup={...orig, id:++plid, labelPreset:'', labelCustom:''};
+  // 手入力の場合は金額もリセット
+  if(g.method==='manual') dup.manualPrice=0;
   g.lines.splice(idx+1,0,dup);
   document.getElementById(`plc-${gId}`).innerHTML=g.lines.map(l=>renderProcLine(g,l)).join('');
   refreshProcGrpHeader(gId);updateTotals();
