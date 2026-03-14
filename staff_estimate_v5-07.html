@@ -1891,7 +1891,7 @@ const OPT_BY_METHOD = {
     { id:'crack',    name:'クラック加工',                  desc:'1枚×カ所数 +¥100',        type:'per_sheet_loc', price:100 },
     { id:'foil',     name:'箔押し',                        desc:'1枚×カ所数 +¥500',        type:'per_sheet_loc', price:500 },
     { id:'large',    name:'特大版（〜w450×h450mm）',       desc:'スクリーン代 ×1.5',       type:'multiplier',    multiplier:1.5 },
-    { id:'choshoku', name:'調色',                          desc:'1回 ¥1,500（固定）',       type:'fixed',         price:1500 },
+    { id:'choshoku', name:'調色',                          desc:'1色 ¥1,500',              type:'fixed_qty',     price:1500 },
   ],
   rubber: [
     { id:'rb_nylon',     name:'ナイロン・撥水',                       desc:'ラバー代 ×1.2', type:'radio_mult', multiplier:1.2 },
@@ -1949,6 +1949,9 @@ function calcOptCost(){
         total+=Math.round(baseCost*(opt.multiplier-1));
       } else if(opt.type==='fixed'){
         total+=opt.price;
+      } else if(opt.type==='fixed_qty'){
+        const q=getOptQty(method,opt.id)||1;
+        total+=opt.price*q;
       } else if(opt.type==='radio_mult'){
         total+=Math.round(baseCost*(opt.multiplier-1));
       }
@@ -1985,16 +1988,21 @@ function renderOptions(){
           c=Math.round(baseCost*(opt.multiplier-1));
         } else if(opt.type==='fixed'){
           c=opt.price;
+        } else if(opt.type==='fixed_qty'){
+          const q=getOptQty(method,opt.id)||1;
+          c=opt.price*q;
         }
         costStr=`<span class="opt-cost">+¥${c.toLocaleString()}</span>`;
       }
+      const qtyInput=(opt.type==='fixed_qty'&&checked)?`<input type="number" min="1" value="${getOptQty(method,opt.id)||1}" onclick="event.stopPropagation()" oninput="uOptQty('${method}','${opt.id}',+this.value)" style="width:50px;border:1.5px solid #e0d090;border-radius:5px;padding:3px 5px;font-size:13px;font-family:inherit;text-align:center;font-weight:700;outline:none;background:#fff;">
+        <span style="font-size:11px;color:#8a6000;">色</span>`:'';
       const indicator=isRadio
         ?`<span class="opt-radio"></span>`
         :`<span class="opt-check">${checked?'✓':''}</span>`;
       return `<div class="opt-item${checked?' checked':''}" onclick="toggleOpt('${method}','${opt.id}',${isRadio})">
         ${indicator}
         <div class="opt-info">
-          <div class="opt-name">${esc(opt.name)}</div>
+          <div class="opt-name">${esc(opt.name)}${qtyInput?'　'+qtyInput:''}</div>
           <div class="opt-desc">${esc(opt.desc)}</div>
         </div>
         ${costStr}
@@ -2017,6 +2025,16 @@ function toggleOpt(method,optId,isRadio){
   renderOptions();
   updateTotals();
 }
+function getOptQty(method,optId){return(optState[method]&&optState[method][optId+'_qty'])||1;}
+function setOptQty(method,optId,val){
+  if(!optState[method])optState[method]={};
+  optState[method][optId+'_qty']=val;
+}
+function uOptQty(method,optId,val){
+  setOptQty(method,optId,val);
+  renderOptions();
+  updateTotals();
+}
 
 /* ================================================================
    合計更新
@@ -2036,6 +2054,7 @@ function updateTotals(){
   document.getElementById('goodsBadge').textContent=f(goods);
   document.getElementById('goodsTotal').textContent=f(goods);
   document.getElementById('matQtyNote').textContent=totalQty>0?`合計 ${totalQty}枚 ／`:'';
+  renderOptions();
   renderExtraOpts();
 
   // 左列：内訳
@@ -2203,12 +2222,18 @@ function copyToClipboard(){
         if(opt.type==='per_sheet_loc'){
           const locs=procGrpsOfMethod.reduce((s,pg)=>s+pg.lines.length,0);
           cost=opt.price*totalQtyForOpt*locs;
+          if(cost>0) optLines.push([opt.name,totalQtyForOpt*locs,'枚',opt.price]);
         } else if(opt.type==='multiplier'||opt.type==='radio_mult'){
           cost=Math.round(baseCost*(opt.multiplier-1));
+          if(cost>0) optLines.push([opt.name,1,'式',cost]);
         } else if(opt.type==='fixed'){
           cost=opt.price;
+          if(cost>0) optLines.push([opt.name,1,'式',cost]);
+        } else if(opt.type==='fixed_qty'){
+          const q=getOptQty(method,opt.id)||1;
+          cost=opt.price*q;
+          if(cost>0) optLines.push([opt.name,q,'色',opt.price]);
         }
-        if(cost>0) optLines.push([opt.name,1,'式',cost]);
       });
     });
   }
