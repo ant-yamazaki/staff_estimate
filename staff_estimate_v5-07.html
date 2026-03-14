@@ -96,6 +96,7 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 .mat-row-line2{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding-top:5px;margin-top:5px;border-top:1px solid #eef0f3;}
 .mat-row-line2 .retail2{font-size:12px;color:var(--sub);white-space:nowrap;}
 .mat-row-line2 .cost2{font-size:15px;font-weight:800;color:var(--green-dk);white-space:nowrap;}
+.mat-row-line2 .dup-warn{font-size:11px;color:#e07000;font-weight:600;margin-right:auto;}
 .mat-row .mr-maker{width:22%;flex-shrink:0;}
 .mat-row .mr-code{width:20%;flex-shrink:0;}
 .mat-row .mr-btns{display:flex;gap:2px;flex-shrink:0;margin-left:auto;}
@@ -1029,6 +1030,7 @@ function renderMatRow(gId,r){
     </div>
     <!-- 5段目：計算結果 -->
     <div class="mat-row-line2">
+      <span class="dup-warn" id="fi-dup-${r.id}"></span>
       <span class="retail2" id="fi-retail2-${r.id}">${r.retail&&r.disc?`上代¥${r.retail.toLocaleString()}（${r.disc}%OFF）`:''}${unitStr?'　'+unitStr:''}</span>
       <span class="cost2" id="fi-res-${r.id}">${cost>0?'¥'+cost.toLocaleString():'—'}</span>
     </div>
@@ -1228,6 +1230,40 @@ function refreshMatGrpHeader(gId){
   const q=document.querySelector(`#mg-${gId} .grp-sub-qty`);
   if(v)v.textContent=st>0?'¥'+st.toLocaleString():'—';
   if(q){q.textContent=qty>0?qty+'枚':'';q.style.display=qty>0?'':'none';}
+}
+
+/* 同一グループ内のサイズ＋カラー重複チェック */
+function checkDupWarnings(gId){
+  const g=matGroups.find(g=>g.id===gId);if(!g)return;
+  // キー→行IDリストのマップを作成
+  const map={};
+  g.rows.forEach(r=>{
+    const sz=r.size||'';
+    const cl=r.colorDetail||'';
+    // サイズ・カラーどちらかが空なら判定しない（入力途中）
+    if(!sz||!cl) return;
+    const key=sz+'|||'+cl;
+    if(!map[key])map[key]=[];
+    map[key].push(r.id);
+  });
+  // 重複しているIDをセット化
+  const dupIds=new Set();
+  Object.values(map).forEach(ids=>{
+    if(ids.length>=2) ids.forEach(id=>dupIds.add(id));
+  });
+  // 各行の警告spanを更新
+  g.rows.forEach(r=>{
+    const el=document.getElementById('fi-dup-'+r.id);
+    if(!el)return;
+    if(dupIds.has(r.id)){
+      el.textContent='⚠ 同じサイズ・カラーの行があります';
+    } else {
+      el.textContent='';
+    }
+  });
+}
+function checkAllDupWarnings(){
+  matGroups.forEach(g=>checkDupWarnings(g.id));
 }
 
 /* ================================================================
@@ -2092,6 +2128,7 @@ function updateTotals(){
   document.getElementById('matQtyNote').textContent=totalQty>0?`合計 ${totalQty}枚 ／`:'';
   renderOptions();
   renderExtraOpts();
+  checkAllDupWarnings();
 
   // 左列：内訳
   let left='';
