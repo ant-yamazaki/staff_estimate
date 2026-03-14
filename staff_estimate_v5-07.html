@@ -98,7 +98,7 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 .mat-row-line2 .cost2{font-size:15px;font-weight:800;color:var(--green-dk);white-space:nowrap;}
 .mat-row .mr-maker{width:22%;flex-shrink:0;}
 .mat-row .mr-code{width:20%;flex-shrink:0;}
-.mat-row .mr-btns{display:flex;gap:2px;flex-shrink:0;}
+.mat-row .mr-btns{display:flex;gap:2px;flex-shrink:0;margin-left:auto;}
 .mat-row .mr-colordetail{flex:1;min-width:0;width:auto;}
 .mat-row .mr-size{width:88px;flex-shrink:0;}
 .mat-row .mr-szcustom{width:65px;}
@@ -1290,6 +1290,10 @@ function renderProcLine(g,l){
   const locOpts=locPresets.map(p=>`<option value="${esc(p)}"${l.labelPreset===p?' selected':''}>${p}</option>`).join('');
   const hasLoc=locPresets.length>0;
 
+  // カ所選択が必要かどうか判定
+  const needLoc=!isManual&&hasLoc; // 手入力は不要、刺繍ワッペン/靴下はhasLoc=falseで不要
+  const locSelected=!!(l.labelPreset); // カ所が選択されているか
+
   // ラベルブロック構築
   let labelBlock;
   if(isManual){
@@ -1300,6 +1304,7 @@ function renderProcLine(g,l){
     const embTypeOpts=EMB_TYPES.map(e=>`<option value="${e.v}"${l.embType===e.v?' selected':''}>${e.l}</option>`).join('');
     const embT=EMB_TYPES.find(e=>e.v===l.embType);
     const needStitch=embT&&!embT.fixed;
+    const showStitch=!needLoc||locSelected; // カ所不要 or カ所選択済みなら針数表示
     labelBlock=`<div style="display:flex;flex-wrap:wrap;align-items:center;gap:5px;width:100%;">
       <select class="pl-sel" style="min-width:130px" onchange="uProcLine(${g.id},${l.id},'embType',this.value)">
         ${embTypeOpts}
@@ -1309,7 +1314,7 @@ function renderProcLine(g,l){
       </select>`:''}
       ${isCustomLoc?`<input id="fi-ploc-${l.id}" class="pl-label" style="width:90px" type="text" placeholder="カ所名"
         value="${esc(l.labelCustom)}" oninput="uProcLine(${g.id},${l.id},'labelCustom',this.value)">`:''}
-      ${needStitch?`<input id="fi-stitch-${l.id}" class="pl-num" type="number" min="0" placeholder="針数" inputmode="numeric"
+      ${showStitch&&needStitch?`<input id="fi-stitch-${l.id}" class="pl-num" type="number" min="0" placeholder="針数" inputmode="numeric"
         value="${l.stitchCount||''}" oninput="uProcLine(${g.id},${l.id},'stitchCount',+this.value)" style="width:90px;">
         <span style="font-size:11px;color:var(--sub);white-space:nowrap">針</span>`:''}
     </div>`;
@@ -1338,22 +1343,26 @@ function renderProcLine(g,l){
     ?[methodLabel,embTypeLabel,locLabel,stitchLabel,discLabel].filter(Boolean)
     :[methodLabel,locLabel,colorsLabel,sizeLabel].filter(Boolean);
   const detailStr=detailParts.join('・')+(unitStr?'　'+unitStr:'');
+
+  // カ所未選択で必要な場合、後続入力を隠す
+  const locPending=needLoc&&!locSelected;
+
   return `<div class="proc-line${cost>0?' has-val':''}" id="pl-${l.id}">
     <div class="proc-line-top">
       ${labelBlock}
-      ${isScreen?`
+      ${locPending?'':(isScreen?`
         <select class="pl-sel" onchange="uProcLine(${g.id},${l.id},'colors',+this.value)">
           ${[1,2,3,4,5,6,7,8].map(n=>`<option value="${n}"${l.colors===n?' selected':''}>${n}色</option>`).join('')}
-        </select>`:''}
-      ${needSize?`
+        </select>`:'')}
+      ${locPending?'':(needSize?`
         <select class="pl-sel" onchange="uProcLine(${g.id},${l.id},'size',+this.value)">
           ${szOpts.map(s=>`<option value="${s.v}"${l.size===s.v?' selected':''}>${s.l}</option>`).join('')}
-        </select>`:''}
+        </select>`:'')}
       ${isManual?`
         <input id="fi-pmanual-${l.id}" class="pl-num" type="number" min="0" placeholder="金額"
           value="${l.manualPrice||''}" oninput="uProcLine(${g.id},${l.id},'manualPrice',+this.value)">
         <span style="font-size:11px;color:var(--sub);white-space:nowrap">円</span>
-      `:`
+      `:locPending?'':` 
         <div style="display:flex;align-items:center;gap:5px;flex-shrink:0;">
           <span style="font-size:11px;color:var(--sub);white-space:nowrap">枚数</span>
           <div class="qty-toggle">
@@ -1372,10 +1381,12 @@ function renderProcLine(g,l){
         <button class="del-btn" onclick="delProcLine(${g.id},${l.id})">✕</button>
       </div>
     </div>
-    <div class="proc-line-bottom">
-      <span class="detail2b" id="fi-punit-${l.id}">${detailStr}</span>
-      <span class="cost2b" id="fi-pres-${l.id}">${cost>0?'¥'+cost.toLocaleString():err&&err!=='枚数0'?'⚠ '+err:'—'}</span>
-    </div>
+    ${locPending
+      ?`<div style="text-align:center;font-size:12px;color:#b0b8c4;font-weight:600;padding:4px 0;">👆 カ所を選択してください</div>`
+      :`<div class="proc-line-bottom">
+        <span class="detail2b" id="fi-punit-${l.id}">${detailStr}</span>
+        <span class="cost2b" id="fi-pres-${l.id}">${cost>0?'¥'+cost.toLocaleString():err&&err!=='枚数0'?'⚠ '+err:'—'}</span>
+      </div>`}
   </div>`;
 }
 
