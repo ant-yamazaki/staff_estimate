@@ -1541,8 +1541,59 @@ const KEYCHAIN_SIZES=[
   {v:'rect_50x30',l:'50×30mm（長方形）'},{v:'rect_70x40',l:'70×40mm（長方形）'},{v:'rect_90x50',l:'90×50mm（長方形）'},
   {v:'sq_50x50', l:'50×50mm（正方形）'},{v:'sq_70x70', l:'70×70mm（正方形）'},{v:'sq_90x90', l:'90×90mm（正方形）'},
 ];
+const CUTTING_PRICE={
+  50:{50:510},
+  100:{50:520,100:610},
+  150:{50:600,100:740,150:830},
+  200:{50:730,100:910,150:1020,200:1100},
+  250:{50:880,100:1100,150:1240,200:1330,250:1400},
+  300:{50:1020,100:1290,150:1450,200:1560,250:1640,300:1710},
+  350:{50:1170,100:1470,150:1660,200:1790,250:1880,300:1960,350:2020},
+  400:{50:1310,100:1650,150:1860,200:2010,250:2120,300:2210,350:2270,400:2320},
+  450:{50:1450,100:1830,150:2070,200:2240,250:2360,300:2450,350:2530,400:2590,450:2640},
+  500:{50:1580,100:2000,150:2270,200:2460,250:2590,300:2700,350:2780,400:2850,450:2900,500:2950},
+  550:{50:1710,100:2170,150:2470,200:2670,250:2820,300:2940,350:3030,400:3100,450:3170,500:3220},
+  600:{50:1840,100:2340,150:2660,200:2890,250:3050,300:3180,350:3280,400:3360,450:3430,500:3480},
+  650:{50:1970,100:2510,150:2860,200:3100,250:3280,300:3420,350:3530,400:3620,450:3690,500:3750},
+  700:{50:2100,100:2680,150:3050,200:3310,250:3510,300:3660,350:3770,400:3870,450:3950,500:4020},
+  750:{50:2220,100:2840,150:3240,200:3520,250:3730,300:3890,350:4020,400:4120,450:4210,500:4280},
+  800:{50:2340,100:3000,150:3430,200:3730,250:3950,300:4120,350:4260,400:4370,450:4460,500:4540},
+  850:{50:2460,100:3160,150:3610,200:3930,250:4170,300:4360,350:4500,400:4620,450:4720,500:4800},
+  900:{50:2580,100:3310,150:3800,200:4140,250:4390,300:4580,350:4740,400:4870,450:4970,500:5060},
+  950:{50:2690,100:3470,150:3980,200:4340,250:4610,300:4810,350:4980,400:5110,450:5230,500:5320},
+  1000:{50:2800,100:3620,150:4160,200:4540,250:4820,300:5040,350:5210,400:5360,450:5480,500:5580},
+  1050:{50:2910,100:3770,150:4330,200:4730,250:5030,300:5260,350:5450,400:5600,450:5730,500:5830},
+  1100:{50:3020,100:3920,150:4510,200:4930,250:5240,300:5490,350:5680,400:5840,450:5970,500:6090},
+  1150:{50:3130,100:4060,150:4680,200:5120,250:5450,300:5710,350:5910,400:6080,450:6220,500:6340},
+  1200:{50:3240,100:4200,150:4850,200:5310,250:5660,300:5930,350:6140,400:6320,450:6470,500:6590},
+  1250:{50:3340,100:4350,150:5020,200:5500,250:5860,300:6150,350:6370,400:6560,450:6710,500:6840},
+  1300:{50:3440,100:4490,150:5190,200:5690,250:6070,300:6360,350:6600,400:6790,450:6950,500:7090},
+  1350:{50:3540,100:4620,150:5350,200:5880,250:6270,300:6580,350:6820,400:7030,450:7190,500:7340},
+  1400:{50:3640,100:4760,150:5520,200:6060,250:6470,300:6790,350:7050,400:7260,450:7430,500:7580},
+};
+const CUTTING_H=[
+  {v:50,l:'～50mm'},{v:100,l:'～100mm'},{v:150,l:'～150mm'},{v:200,l:'～200mm'},
+  {v:250,l:'～250mm'},{v:300,l:'～300mm'},{v:350,l:'～350mm'},{v:400,l:'～400mm'},
+  {v:450,l:'～450mm'},{v:500,l:'～500mm'},{v:550,l:'～550mm'},{v:600,l:'～600mm'},
+  {v:650,l:'～650mm'},{v:700,l:'～700mm'},{v:750,l:'～750mm'},{v:800,l:'～800mm'},
+  {v:850,l:'～850mm'},{v:900,l:'～900mm'},{v:950,l:'～950mm'},{v:1000,l:'～1000mm'},
+  {v:1050,l:'～1050mm'},{v:1100,l:'～1100mm'},{v:1150,l:'～1150mm'},{v:1200,l:'～1200mm'},
+  {v:1250,l:'～1250mm'},{v:1300,l:'～1300mm'},{v:1350,l:'～1350mm'},{v:1400,l:'～1400mm'},
+];
+const CUTTING_W=[
+  {v:50,l:'～50mm'},{v:100,l:'～100mm'},{v:150,l:'～150mm'},{v:200,l:'～200mm'},
+  {v:250,l:'～250mm'},{v:300,l:'～300mm'},{v:350,l:'～350mm'},{v:400,l:'～400mm'},
+  {v:450,l:'～450mm'},{v:500,l:'～500mm'},
+];
+function getCuttingUnit(h,w){
+  if(!h||!w) return 0;
+  const row=CUTTING_PRICE[h];
+  if(!row) return 0;
+  return row[w]||0;
+}
 const GOODS_TYPES=[
   {v:'sticker', l:'ステッカー（塩ビ・ラミネート）'},
+  {v:'cutting', l:'カッティングシート'},
   {v:'keychain',l:'アクリルキーホルダー'},
   {v:'other',   l:'その他（手入力）'},
 ];
@@ -1563,9 +1614,14 @@ function getKeychainUnit(sizeId,qty){
 
 /* グッズ 状態管理 */
 let goodsGroups=[];let ggid=0;
-function newGoodsGroup(){return{id:++ggid,type:'sticker',size:null,qty:0,manualName:'',manualPrice:0};}
+function newGoodsGroup(){return{id:++ggid,type:'sticker',size:null,qty:0,manualName:'',manualPrice:0,cutH:null,cutW:null,dataFeeOn:false,dataFee:0};}
 function calcGoodsGroup(g){
   if(g.type==='sticker')  return getStickerTotal(g.size,g.qty);
+  if(g.type==='cutting'){
+    const unit=getCuttingUnit(g.cutH,g.cutW);
+    const total=unit*(g.qty||0);
+    return total+(g.dataFeeOn?(g.dataFee||0):0);
+  }
   if(g.type==='keychain') return getKeychainUnit(g.size,g.qty)*g.qty;
   if(g.type==='other')    return g.manualPrice||0;
   return 0;
@@ -1584,6 +1640,35 @@ function renderGoodsGroup(g,idx){
     inputs=`<select class="gs" onchange="uGoods(${g.id},'size',+this.value)">${sOpts}</select>
       <input id="fi-gqty-${g.id}" class="gn" type="number" min="5" placeholder="枚数" value="${g.qty||''}" oninput="uGoods(${g.id},'qty',+this.value)">
       <span style="font-size:11px;color:var(--sub)">枚</span>${note}`;
+  } else if(g.type==='cutting'){
+    const hOpts=`<option value="">高さ</option>`+CUTTING_H.map(s=>`<option value="${s.v}"${g.cutH==s.v?' selected':''}>${s.l}</option>`).join('');
+    // 幅は選択した高さ以下のみ表示
+    const availW=g.cutH?CUTTING_W.filter(w=>w.v<=g.cutH):CUTTING_W;
+    const wOpts=`<option value="">幅</option>`+availW.map(s=>`<option value="${s.v}"${g.cutW==s.v?' selected':''}>${s.l}</option>`).join('');
+    const unit=getCuttingUnit(g.cutH,g.cutW);
+    const unitNote=unit>0?`@¥${unit.toLocaleString()}`:'';
+    const totalNote=unit>0&&g.qty>0?`<span class="goods-note">${unitNote} × ${g.qty}枚 = ¥${(unit*g.qty).toLocaleString()}${g.dataFeeOn&&g.dataFee>0?' ＋ データ製作費¥'+g.dataFee.toLocaleString():''}</span>`:'';
+    inputs=`<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;width:100%;">
+      <div style="display:flex;align-items:center;gap:4px;">
+        <span style="font-size:11px;color:var(--sub);white-space:nowrap;">データ製作費</span>
+        <div class="qty-toggle">
+          <button class="${g.dataFeeOn?'on':''}" onclick="uGoods(${g.id},'dataFeeOn',true)">あり</button>
+          <button class="${!g.dataFeeOn?'on':''}" onclick="uGoods(${g.id},'dataFeeOn',false)">なし</button>
+        </div>
+        ${g.dataFeeOn?`<input class="gn" type="number" min="0" placeholder="金額" value="${g.dataFee||''}" oninput="uGoods(${g.id},'dataFee',+this.value)" style="width:90px;">
+          <span style="font-size:11px;color:var(--sub)">円</span>`:''}
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;">
+        <select class="gs" onchange="uGoods(${g.id},'cutH',+this.value)">${hOpts}</select>
+        <span style="font-size:11px;color:var(--sub);">×</span>
+        <select class="gs" onchange="uGoods(${g.id},'cutW',+this.value)">${wOpts}</select>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;">
+        <input id="fi-gqty-${g.id}" class="gn" type="number" min="1" placeholder="枚数" value="${g.qty||''}" oninput="uGoods(${g.id},'qty',+this.value)">
+        <span style="font-size:11px;color:var(--sub)">枚</span>
+      </div>
+      ${totalNote}
+    </div>`;
   } else if(g.type==='keychain'){
     const sOpts=`<option value="">サイズ選択</option>`+KEYCHAIN_SIZES.map(s=>`<option value="${s.v}"${g.size===s.v?' selected':''}>${s.l}</option>`).join('');
     const unit=getKeychainUnit(g.size,g.qty);
@@ -1624,7 +1709,7 @@ function delGoodsGroup(id){
 }
 function uGoodsType(id,val){
   const g=goodsGroups.find(g=>g.id===id);if(!g)return;
-  g.type=val;g.size=null;g.qty=0;g.manualPrice=0;
+  g.type=val;g.size=null;g.qty=0;g.manualPrice=0;g.cutH=null;g.cutW=null;g.dataFeeOn=false;g.dataFee=0;
   renderGoodsGroups();updateTotals();
 }
 function uGoods(id,key,val){
@@ -1635,7 +1720,7 @@ function uGoods(id,key,val){
     // テキスト入力 → DOM再生成なし
     updateTotals();return;
   }
-  if(key==='qty'||key==='manualPrice'){
+  if(key==='qty'||key==='manualPrice'||key==='dataFee'){
     // 数値入力 → 結果表示だけ更新（DOM再生成なし）
     const cost=calcGoodsGroup(g);
     const rh=cost>0?`<span class="r-val" style="color:#7a30c0;">¥${cost.toLocaleString()}</span>`:`<span class="r-pend">—</span>`;
@@ -1650,6 +1735,14 @@ function uGoods(id,key,val){
     if(noteEl){
       if(g.type==='sticker'&&g.size&&g.qty>=5)
         noteEl.textContent=`合計: ¥${getStickerTotal(g.size,g.qty).toLocaleString()}`;
+      else if(g.type==='cutting'){
+        const u=getCuttingUnit(g.cutH,g.cutW);
+        if(u>0&&g.qty>0){
+          let t=`@¥${u.toLocaleString()} × ${g.qty}枚 = ¥${(u*g.qty).toLocaleString()}`;
+          if(g.dataFeeOn&&g.dataFee>0) t+=` ＋ データ製作費¥${g.dataFee.toLocaleString()}`;
+          noteEl.textContent=t;
+        }
+      }
       else if(g.type==='keychain'&&g.size&&g.qty>=10){
         const u=getKeychainUnit(g.size,g.qty);
         noteEl.textContent=`@¥${u.toLocaleString()} × ${g.qty}個`;
@@ -1657,7 +1750,11 @@ function uGoods(id,key,val){
     }
     updateTotals();return;
   }
-  // size変更などはDOM再生成
+  if(key==='cutH'){
+    // 高さ変更 → 幅が高さを超えていたらリセット
+    if(g.cutW&&g.cutW>val) g.cutW=null;
+  }
+  // size/cutH/cutW/dataFeeOn変更などはDOM再生成
   withFocusRestore(()=>{
     const el=document.getElementById(`gg-${id}`);
     if(el){const t=document.createElement('div');t.innerHTML=renderGoodsGroup(g,goodsGroups.indexOf(g));el.replaceWith(t.firstElementChild);}
@@ -2152,12 +2249,25 @@ function copyToClipboard(){
     goodsGroups.forEach(g=>{
       const cost=calcGoodsGroup(g);
       if(!cost)return;
-      const label=g.type==='sticker'?`ステッカー（${g.size||''}㎠）`
-        :g.type==='keychain'?`アクリルキーホルダー（${g.size||''}mm）`
-        :(g.manualName||'グッズ');
-      const qty=g.qty||1;
-      const unitPrice=Math.round(cost/qty);
-      goodsLines.push([label,qty,'個',unitPrice]);
+      if(g.type==='cutting'){
+        // データ製作費は別行
+        if(g.dataFeeOn&&g.dataFee>0){
+          goodsLines.push(['カッティングシート　データ製作費',1,'式',g.dataFee]);
+        }
+        const unit=getCuttingUnit(g.cutH,g.cutW);
+        if(unit>0&&g.qty>0){
+          const hL=(CUTTING_H.find(s=>s.v===g.cutH)||{l:''}).l;
+          const wL=(CUTTING_W.find(s=>s.v===g.cutW)||{l:''}).l;
+          goodsLines.push([`カッティングシート（${hL}×${wL}）`,g.qty,'枚',unit]);
+        }
+      } else {
+        const label=g.type==='sticker'?`ステッカー（${g.size||''}㎠）`
+          :g.type==='keychain'?`アクリルキーホルダー（${g.size||''}mm）`
+          :(g.manualName||'グッズ');
+        const qty=g.qty||1;
+        const unitPrice=Math.round(cost/qty);
+        goodsLines.push([label,qty,'個',unitPrice]);
+      }
     });
   }
 
