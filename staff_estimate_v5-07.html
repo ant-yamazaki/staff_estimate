@@ -949,6 +949,9 @@ function liveSearchCode(gId, rId){
       </div>`;
       return;
     }
+    // 候補なし → 品番不一致警告
+    popup.innerHTML = `<div style="padding:8px 12px;margin:4px 0;background:#fff8f0;border:1.5px solid #f0a040;border-radius:8px;font-size:12px;color:#b06000;font-weight:600;">⚠ 「${esc(code)}」に該当する品番が見つかりません</div>`;
+    return;
   }
 
   popup.innerHTML='';
