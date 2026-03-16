@@ -2718,7 +2718,8 @@ function copyToClipboard(){
         name=[methodLabel,locLabel,colorsLabel,sizeLabel].filter(Boolean).join('　');
       }
       const unitPrice=qty>0?Math.round(cost/qty):0;
-      procLines.push([name,qty,'枚',unitPrice]);
+      const sharedNote=l.sharedPlate&&rateQty>qty?`（共通計${rateQty}枚の単価）`:'';
+      procLines.push([name+sharedNote,qty,'枚',unitPrice]);
       procHasContent=true;
     });
   });
