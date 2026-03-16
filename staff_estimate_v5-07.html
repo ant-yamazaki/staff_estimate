@@ -102,6 +102,7 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 .mat-row .mr-btns{display:flex;gap:2px;flex-shrink:0;margin-left:auto;}
 .mat-row .mr-colordetail{flex:1;min-width:0;width:auto;}
 .mat-row .mr-size{width:88px;flex-shrink:0;}
+.mat-row .mr-colorcat{width:120px;flex-shrink:0;font-size:12px;font-weight:700;color:var(--green-dk);}
 .mat-row .mr-szcustom{width:65px;}
 .mat-row .mr-qty{width:80px;}
 .mat-row .mr-retail{width:100px;}
@@ -267,6 +268,7 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
   .mat-row-line0b{gap:5px;}
   .mat-row .mr-colordetail{font-size:13px;padding:7px 8px;flex:1;min-width:60px;width:auto;}
   .mat-row .mr-size{width:30%;font-size:13px;padding:7px 6px;}
+  .mat-row .mr-colorcat{width:35%;font-size:13px;padding:7px 6px;}
   .mat-row .mr-szcustom{width:60px;font-size:13px;padding:7px 6px;}
   .color-group-tag{font-size:10px;padding:2px 7px;}
 
@@ -380,6 +382,10 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 .gn::-webkit-inner-spin-button,.gn::-webkit-outer-spin-button{-webkit-appearance:none;}
 .gn:focus{border-color:#9055cc;}
 .goods-note{font-size:11px;color:var(--sub);padding:2px 0;}
+
+/* ─── 未入力ハイライト ─── */
+@keyframes warn-pulse{0%{box-shadow:0 0 0 0 rgba(255,140,0,.5)}50%{box-shadow:0 0 0 4px rgba(255,140,0,.3)}100%{box-shadow:0 0 0 0 rgba(255,140,0,0)}}
+.field-warn{animation:warn-pulse .6s ease 2;border-color:#ff8c00 !important;}
 
 /* ─── アニメーション ─── */
 @keyframes fi{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
@@ -549,12 +555,14 @@ body{background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:var(--text
 /* ================================================================
    カスタム確認ダイアログ（confirm()の代替）
 ================================================================ */
-function showToast(msg){
+function showToast(msg, duration){
   let t=document.getElementById('_toast');
   if(!t){t=document.createElement('div');t.id='_toast';t.className='toast';document.body.appendChild(t);}
   t.textContent=msg;t.classList.add('show');
+  // 警告は長め表示
+  const ms=duration||2000;
   clearTimeout(t._timer);
-  t._timer=setTimeout(()=>t.classList.remove('show'),2000);
+  t._timer=setTimeout(()=>t.classList.remove('show'),ms);
 }
 
 
@@ -576,7 +584,7 @@ function customConfirm(msg, onOk){
 }
 
 
-const MAT_PRESETS=['Tシャツ','ポロシャツ','スウェット','パーカー','ジャケット / ブルゾン','ベスト','キャップ / ハット','トートバッグ','エプロン','タオル','その他（自由入力）'];
+const MAT_PRESETS=['Tシャツ','ロングスリーブ','ポロシャツ','スウェット','パーカー','ジャケット / ブルゾン','ベスト','キャップ / ハット','トートバッグ','エプロン','タオル','その他（自由入力）'];
 const PROC_METHODS=[
   {v:'screen',       l:'スクリーンプリント'},
   {v:'garment_light',l:'ガーメントプリント（淡色）'},
@@ -639,6 +647,147 @@ const SIZES_DEFAULT=['XS','S','M','L','XL','XXL','XXXL','4XL','5XL','100','110',
 function getSizesForMaker(maker){
   return (MAKER_SIZES[maker]||SIZES_DEFAULT).map(s=>({v:s==='その他'?'OTHER':s, l:s}));
 }
+/* ─── 品番連動サイズ展開 ─── */
+// 数値キッズサイズ順序（範囲展開用）
+const ALL_SIZE_ORDER_NUM=['70','80','90','100','110','120','130','140','150','160'];
+// ユニバーサルアルファサイズ順序（メーカーリストにないサイズのフォールバック用）
+const UNIVERSAL_SIZE_ORDER=['SS','XS','S','M','L','LL','XL','2XL','XXL','3L','3XL','XXXL','4L','4XL','XXXXL','5L','5XL','6L','6XL','7L','7XL'];
+
+/**
+ * PRICE_DBのサイズ表記を個別サイズ配列に展開
+ * メーカーのMAKER_SIZESに基づいて範囲展開する
+ * 例: "S ～ XL"(UA) → ['S','M','L','XL']
+ *     "S - XL"(TOMS) → ['S','M','L','LL','XL']
+ *     "XXL" → ['XXL']
+ *     "110・130・150cm" → ['110','130','150']
+ *     "WM, S - 2XL" → ['WM','S','M','L','LL','XL','2XL']
+ *     "F" → ['フリー']
+ */
+function expandSizeRange(sizeStr, maker){
+  if(!sizeStr) return [];
+  let s=sizeStr.replace(/cm/g,'').trim();
+  if(s==='F') return ['フリー'];
+
+  // メーカー別サイズ順序を基準にする（「その他」「フリー」は除外）
+  const makerOrder=(MAKER_SIZES[maker]||SIZES_DEFAULT).filter(x=>x!=='その他'&&x!=='フリー');
+
+  // L系（日本式）とXL系（国際式）のサイズ群
+  const L_SERIES=new Set(['SS','LL','3L','4L','5L','6L','7L']);
+  const XL_SERIES=new Set(['XS','XL','2XL','XXL','3XL','XXXL','4XL','XXXXL','5XL','6XL','7XL']);
+
+  // カンマ区切りで分割（"WM, S - 2XL" → ["WM", "S - 2XL"]）
+  const parts=s.split(/,/).map(p=>p.trim()).filter(Boolean);
+  const result=[];
+  for(const part of parts){
+    // 範囲記号で分割を試みる（"S ～ XL" or "S - XL"）
+    // ※ G-M, W-M 等のハイフン付きサイズ名と区別するため、スペース付きハイフンのみ
+    let rm=part.match(/^(.+?)\s*～\s*(.+)$/);
+    if(!rm) rm=part.match(/^(.+?)\s+[-–ー]\s+(.+)$/);
+    if(rm){
+      const start=rm[1].trim(), end=rm[2].trim();
+      // JS/JL プレフィックス処理（TRUSS: "JS110 ～ JL150" → 110～150）
+      const jsMatch=start.match(/^J[SML](\d+)$/);
+      const jlMatch=end.match(/^J[SML](\d+)$/);
+      if(jsMatch||jlMatch){
+        const sn=parseInt(jsMatch?jsMatch[1]:start);
+        const en=parseInt(jlMatch?jlMatch[1]:end);
+        if(!isNaN(sn)&&!isNaN(en)){
+          const si=ALL_SIZE_ORDER_NUM.indexOf(String(sn));
+          const ei=ALL_SIZE_ORDER_NUM.indexOf(String(en));
+          if(si>=0&&ei>=0&&si<=ei){result.push(...ALL_SIZE_ORDER_NUM.slice(si,ei+1));continue;}
+        }
+      }
+      // 数値範囲（キッズサイズ）
+      const sn=parseInt(start), en=parseInt(end);
+      if(!isNaN(sn)&&!isNaN(en)){
+        const si=ALL_SIZE_ORDER_NUM.indexOf(String(sn));
+        const ei=ALL_SIZE_ORDER_NUM.indexOf(String(en));
+        if(si>=0&&ei>=0&&si<=ei){result.push(...ALL_SIZE_ORDER_NUM.slice(si,ei+1));continue;}
+      }
+      // メーカーサイズ順序で範囲展開
+      const si=makerOrder.indexOf(start);
+      const ei=makerOrder.indexOf(end);
+      if(si>=0&&ei>=0&&si<=ei){
+        let expanded=makerOrder.slice(si,ei+1);
+        // LL/XL混在防止: 範囲端にXL系があればL系を除去、逆も同様
+        const usesXL=XL_SERIES.has(start)||XL_SERIES.has(end);
+        const usesL=L_SERIES.has(start)||L_SERIES.has(end);
+        if(usesXL&&!usesL) expanded=expanded.filter(x=>!L_SERIES.has(x));
+        else if(usesL&&!usesXL) expanded=expanded.filter(x=>!XL_SERIES.has(x));
+        result.push(...expanded);
+        continue;
+      }
+      // メーカーリストにない場合はユニバーサル順序でフォールバック
+      const usi=UNIVERSAL_SIZE_ORDER.indexOf(start);
+      const uei=UNIVERSAL_SIZE_ORDER.indexOf(end);
+      if(usi>=0&&uei>=0&&usi<=uei){
+        let expanded=UNIVERSAL_SIZE_ORDER.slice(usi,uei+1);
+        const usesXL2=XL_SERIES.has(start)||XL_SERIES.has(end);
+        const usesL2=L_SERIES.has(start)||L_SERIES.has(end);
+        if(usesXL2&&!usesL2) expanded=expanded.filter(x=>!L_SERIES.has(x));
+        else if(usesL2&&!usesXL2) expanded=expanded.filter(x=>!XL_SERIES.has(x));
+        result.push(...expanded);
+        continue;
+      }
+      // マッチしなかった場合はそのまま
+      result.push(part);
+      continue;
+    }
+    // 中黒区切り（全角「・」半角「･」両対応: "110・130・150" or "G-M･G-L"）
+    if(part.includes('・')||part.includes('･')){
+      result.push(...part.split(/[・･]/).map(x=>x.trim()));
+      continue;
+    }
+    // 単独サイズ
+    result.push(part==='F'?'フリー':part);
+  }
+  return result;
+}
+
+/**
+ * 品番から利用可能なサイズ一覧を取得
+ * @returns {Array<{v:string,l:string}>|null} サイズオプション配列、DB未登録ならnull
+ */
+function getSizesForProduct(maker, code){
+  const makerDB=PRICE_DB[maker];
+  if(!makerDB) return null;
+  const found=findItemByCode(makerDB, (code||'').trim());
+  if(!found) return null;
+  // 全pricesからサイズを展開・重複除去（出現順を維持）
+  const seen=new Set();
+  const sizes=[];
+  found.item.prices.forEach(p=>{
+    expandSizeRange(p.size, maker).forEach(s=>{
+      if(!seen.has(s)){seen.add(s);sizes.push(s);}
+    });
+  });
+  if(sizes.length===0) return null;
+  // 「その他」を末尾に追加（手入力用）
+  sizes.push('その他');
+  return sizes.map(s=>({v:s==='その他'?'OTHER':s, l:s}));
+}
+
+/**
+ * 品番から利用可能なカラー区分一覧を取得
+ * @returns {Array<{v:string,l:string}>|null} カラー区分配列、DB未登録or単一区分ならnull
+ */
+function getColorsForProduct(maker, code){
+  const makerDB=PRICE_DB[maker];
+  if(!makerDB) return null;
+  const found=findItemByCode(makerDB, (code||'').trim());
+  if(!found) return null;
+  // 全pricesからカラー区分を重複除去（出現順を維持）
+  const seen=new Set();
+  const colors=[];
+  found.item.prices.forEach(p=>{
+    const c=p.color||'';
+    if(c && !seen.has(c)){ seen.add(c); colors.push(c); }
+  });
+  // カラー区分がない（価格にcolor区分がない品番）or 1つだけなら不要
+  if(colors.length<=1) return null;
+  return colors.map(c=>({v:c, l:c}));
+}
+
 // 後方互換用（加工サイズなどで使用）
 const SIZES=[
   {v:'',l:'サイズ'},{v:'XS',l:'XS'},{v:'S',l:'S'},{v:'M',l:'M'},{v:'L',l:'L'},{v:'XL',l:'XL'},
@@ -707,7 +856,7 @@ function getDefaultDisc(maker){
   const tot=getTotalQty();
   return tot>=200?40:35;
 }
-function newMatRow(){const tot=getTotalQty();return{id:++mid,maker:'UA',makerCustom:'',code:'',color:'',size:'S',sizeCustom:'',qty:0,retail:0,disc:tot>=200?40:35};}
+function newMatRow(){const tot=getTotalQty();return{id:++mid,maker:'UA',makerCustom:'',code:'',color:'',colorDetail:'',size:'',sizeCustom:'',qty:0,retail:0,disc:tot>=200?40:35,_productSizes:null,_productColors:null,_productConfirmed:false};}
 function newMatGroup(){return{id:++mgid,name:'',customName:'',rows:[newMatRow()]};}
 function calcMatRow(r){if(!r.retail||!r.qty)return 0;return Math.round(r.retail*r.qty*(1-(r.disc??35)/100));}
 
@@ -754,30 +903,35 @@ function liveSearchCode(gId, rId){
   const popup = document.getElementById('pp-'+rId);
   if(!popup) return;
 
-  // 空欄ならクリア
-  if(!code){ popup.innerHTML=''; return; }
+  // 空欄ならクリア（品番連動サイズもリセット）
+  if(!code){ popup.innerHTML=''; clearProductSizes(gId, row); return; }
 
-  // 価格選択済みならポップアップを出さない
-  if(row.retail){ popup.innerHTML=''; return; }
+  // 価格が確定済み＆品番確認済みならポップアップを出さない
+  if(row._productConfirmed){ popup.innerHTML=''; return; }
 
-  // 完全一致 → 価格選択ポップアップ
+  // 完全一致 → 品番連動サイズ＆カラー区分をセット＆品番確認
   const found = findItemByCode(makerDB, code);
   if(found){
     const item = found.item;
-    const listHtml = item.prices.map((p,i)=>{
-      const label = [p.size||'', p.color||''].filter(Boolean).join(' / ') || '共通';
-      return `<div class="price-popup-item" onmousedown="applyPrice(${gId},${rId},${i})">
-        <span class="pi-label">${label}</span>
-        <span class="pi-price">¥${p.retail.toLocaleString()}</span>
-      </div>`;
-    }).join('');
-    popup.innerHTML = `<div class="price-popup" id="ppdiv-${rId}">
-      <span class="price-popup-close" onmousedown="closePopup(${rId})">×</span>
-      <div class="price-popup-title">📦 ${item.name}</div>
-      <div class="price-popup-list">${listHtml}</div>
-    </div>`;
+    // 品番連動サイズ・カラー区分を設定
+    applyProductSizes(gId, row, item);
+    row._productConfirmed = true;
+    // サイズ・カラー区分が既にあれば上代を自動設定
+    if(row.size && row.color) applyAutoRetail(row, rId);
+    // ポップアップクリア
+    popup.innerHTML='';
+    // 行を再描画（カラー区分セレクト等を反映）フォーカス・カーソル位置を保持
+    withFocusRestore(()=>{
+      const el=document.getElementById(`mrow-${rId}`);
+      if(el){const t=document.createElement('div');t.innerHTML=renderMatRow(gId,row);el.replaceWith(t.firstElementChild);}
+    });
+    showToast(`✅ ${item.name}`);
+    updateTotals();
     return;
   }
+
+  // 完全一致しない → 品番連動サイズをクリア
+  clearProductSizes(gId, row);
 
   // 部分一致 → サジェストリスト
   if(code.length>=2){
@@ -800,6 +954,58 @@ function liveSearchCode(gId, rId){
   popup.innerHTML='';
 }
 
+/**
+ * 品番連動サイズを行にセットし、サイズドロップダウンを更新
+ */
+function applyProductSizes(gId, row, item){
+  const productSizes = getSizesForProduct(row.maker, row.code);
+  if(!productSizes) return;
+  row._productSizes = productSizes;
+  // カラー区分リストもセット
+  row._productColors = getColorsForProduct(row.maker, row.code);
+  // 商品名をセット
+  row.prodName = item.name;
+  const nameEl = document.getElementById('fi-prodname-'+row.id);
+  if(nameEl){ nameEl.textContent = item.name; nameEl.style.display=''; }
+  // 現在のサイズが新リストにない場合はリセット
+  if(row.size && !productSizes.find(s=>s.v===row.size)){
+    row.size=''; row.retail=0;
+  }
+  // カラー区分が1つだけなら自動適用
+  if(row._productColors && row._productColors.length===1){
+    row.color = row._productColors[0].v;
+  }
+  // カラー区分がない品番はcolorクリア
+  if(!row._productColors){
+    row.color='';
+  }
+  refreshSizeSelect(gId, row);
+}
+
+/**
+ * 品番連動サイズをクリアしてメーカー共通サイズに戻す
+ */
+function clearProductSizes(gId, row){
+  if(!row._productSizes) return;
+  row._productSizes = null;
+  row._productColors = null;
+  row._productConfirmed = false;
+  refreshSizeSelect(gId, row);
+}
+
+/**
+ * サイズselectのオプションを再描画（DOM再生成なし）
+ */
+function refreshSizeSelect(gId, row){
+  const sizes = row._productSizes || getSizesForMaker(row.maker);
+  const sizeVal = sizes.find(s=>s.v===row.size) ? row.size : (row.size==='OTHER'?'OTHER':'');
+  const sizeEl = document.querySelector(`#mrow-${row.id} .mr-size`);
+  if(sizeEl){
+    sizeEl.innerHTML = `<option value="">サイズ</option>` +
+      sizes.map(s=>`<option value="${s.v}"${sizeVal===s.v?' selected':''}>${s.l}</option>`).join('');
+  }
+}
+
 // サジェスト候補を選択
 function pickSuggest(gId, rId, code){
   const row = matGroups.flatMap(g=>g.rows).find(r=>r.id===rId);
@@ -810,6 +1016,9 @@ function pickSuggest(gId, rId, code){
   if(codeInput) codeInput.value = code;
   // リセット（uMatRowのcode変更と同じ処理）
   row.prodName=''; row.retail=0; row.color=''; row.colorDetail='';
+  row._productSizes=null; // 品番連動サイズクリア（liveSearchCodeで再セットされる）
+  row._productColors=null;
+  row._productConfirmed=false;
   const nameEl=document.getElementById('fi-prodname-'+rId);
   if(nameEl){nameEl.textContent='';nameEl.style.display='none';}
   const tagEl=document.getElementById('fi-colortag-'+rId);
@@ -823,6 +1032,7 @@ function pickSuggest(gId, rId, code){
 }
 
 // サイズ・カラーから最適な上代を自動取得
+// row.color（カラー区分セレクト）を最優先、なければcolorDetailから推定
 function autoLookupRetail(row){
   const makerDB = PRICE_DB[row.maker];
   if(!makerDB) return null;
@@ -833,7 +1043,8 @@ function autoLookupRetail(row){
   const item = found.item;
 
   const sz = row.size||'';
-  const cl = row.color||'';
+  // カラー区分セレクトがあればそれを使う、なければcolorDetailから推定
+  const selectedColor = row.color||'';
 
   // サイズグループ判定
   function sizeGroup(s){
@@ -843,18 +1054,8 @@ function autoLookupRetail(row){
     if(/XS|^S$|^M$|^L$|^XL$/.test(s)) return 'small';
     return s;
   }
-  // カラーグループ判定
-  function colorGroup(c){
-    if(!c) return '';
-    if(c.includes('ホワイト')||c.toLowerCase()==='white') return 'ホワイト';
-    if(c.includes('アッシュ')) return 'アッシュ';
-    if(c.includes('ヘザー')) return 'ヘザーカラー';
-    if(c.includes('ウッドランド')) return 'ウッドランド柄';
-    return 'カラー';
-  }
 
   const sg = sizeGroup(sz);
-  const cg = colorGroup(cl);
 
   let best = null, bestScore = -1;
   for(const p of item.prices){
@@ -862,22 +1063,47 @@ function autoLookupRetail(row){
     const ps = p.size||'';
     const pc = p.color||'';
 
-    // サイズスコア
+    // サイズスコア（品番連動対応: 範囲展開して選択サイズが含まれるか判定）
     if(!ps){ score+=3; }
     else if(sg==='XXXL+'&&/XXXL/.test(ps)) score+=10;
     else if(sg==='XXL'&&/^XXL/.test(ps)) score+=10;
-    else if(sg==='small'&&/XS|S\s*～|S\s*〜/.test(ps)) score+=10;
+    else if(sg==='small'&&/XS|S\s*～|S\s*〜|S\s+-\s/.test(ps)) score+=10;
     else if(sz&&ps===sz) score+=10;
+    else if(sz){
+      const expanded = expandSizeRange(ps, row.maker);
+      if(expanded.includes(sz)) score+=10;
+    }
     else score+=0;
 
-    // カラースコア
-    if(!pc){ score+=2; }
-    else if(cg&&pc.includes(cg)) score+=5;
-    else if(cg==='カラー'&&!pc.includes('ホワイト')&&!pc.includes('アッシュ')&&!pc.includes('ヘザー')) score+=3;
+    // カラースコア: セレクト値とDB区分を直接比較
+    if(!pc){
+      // DBにカラー区分がないエントリ → 汎用マッチ
+      score+=2;
+    } else if(selectedColor){
+      // カラー区分セレクトが選択済み → 完全一致
+      if(pc===selectedColor) score+=10;
+      else score+=0;
+    } else {
+      // カラー区分未選択 → 最初のエントリを弱く優先
+      score+=1;
+    }
 
     if(score>bestScore){ bestScore=score; best=p; }
   }
-  return best?best.retail:null;
+  return best;
+}
+
+/**
+ * autoLookupRetailの結果を行に適用（上代のみ自動更新）
+ * サイズ変更・カラー区分変更時に呼ぶ
+ */
+function applyAutoRetail(row, rId){
+  const match = autoLookupRetail(row);
+  if(!match) return;
+  row.retail = match.retail;
+  // 上代入力欄を更新
+  const retEl = document.getElementById('fi-retail-'+rId);
+  if(retEl) retEl.value = match.retail;
 }
 
 function applyPrice(gId, rId, priceIdx){
@@ -913,11 +1139,21 @@ function applyPrice(gId, rId, priceIdx){
     else { tagEl.textContent=''; tagEl.style.display='none'; }
   }
   // 具体的な色名（「カラー」系の汎用語以外）なら詳細カラーに自動入力
-  const genericColors = ['カラー','その他','mixed','other'];
+  const genericColors = ['カラー','その他','mixed','other','ホワイト・カラー','ホワイト・カラー・蛍光カラー','ナチュラル','配色','ミックスカラー','ストライプ柄・ウッドランド柄','ヘザーカラー','ウッドランド柄'];
   if(p.color && !genericColors.includes(p.color)){
     row.colorDetail = p.color;
     const detailEl = document.getElementById('fi-colordetail-'+rId);
     if(detailEl) detailEl.value = p.color;
+  }
+
+  // 選択した価格エントリのサイズ展開が1つだけなら自動セット
+  const expandedSizes = expandSizeRange(p.size, row.maker);
+  if(expandedSizes.length===1){
+    const sz = expandedSizes[0]==='フリー'?'フリー':expandedSizes[0];
+    const sizeV = sz==='その他'?'OTHER':sz;
+    row.size = sizeV;
+    const sizeEl = document.querySelector(`#mrow-${rId} .mr-size`);
+    if(sizeEl) sizeEl.value = sizeV;
   }
 
   closePopup(rId);
@@ -990,7 +1226,9 @@ function renderMatRow(gId,r){
   const unitPrice=r.retail&&r.disc?(r.retail*(1-r.disc/100)):0;
   const unitStr=unitPrice>0?`@ ¥${Math.round(unitPrice).toLocaleString()}`:'';
   const makerOpts=MAKERS.map(m=>`<option value="${m.v}"${r.maker===m.v?' selected':''}>${m.l}</option>`).join('');
-  const sizes=getSizesForMaker(r.maker);
+  // 品番連動サイズ: DB登録品番が確定していればその品番のサイズ、なければメーカー共通サイズ
+  const productSizes=r._productSizes||null;
+  const sizes=productSizes||getSizesForMaker(r.maker);
   // 現在のsizeがリストにない場合はOTHERにフォールバック
   const sizeVal=sizes.find(s=>s.v===r.size)?r.size:(r.size==='OTHER'?'OTHER':r.size);
   const sizeOpts=`<option value="">サイズ</option>`+sizes.map(s=>`<option value="${s.v}"${sizeVal===s.v?' selected':''}>${s.l}</option>`).join('');
@@ -1014,10 +1252,15 @@ function renderMatRow(gId,r){
     <span id="fi-prodname-${r.id}" class="mr-prodname" style="display:${r.prodName?'block':'none'}">${esc(r.prodName||'')}</span>
     <!-- ポップアップ（品番入力の直下にフロー表示） -->
     <div id="pp-${r.id}" class="mr-popup-slot"></div>
-    <!-- 2段目：カラー／サイズ -->
+    <!-- 2段目：カラー区分／詳細カラー／サイズ -->
     <div class="mat-row-line0b">
-      <span id="fi-colortag-${r.id}" class="color-group-tag" style="${r.color?'':'display:none'}">${esc(r.color||'')}</span>
-      <input id="fi-colordetail-${r.id}" class="mi mr-colordetail" type="text" placeholder="詳細カラー（例：レッド）" value="${esc(r.colorDetail||'')}" oninput="uMatRow(${gId},${r.id},'colorDetail',this.value)">
+      ${r._productColors
+        ?`<select id="fi-colorcat-${r.id}" class="ms mr-colorcat" onchange="uMatRow(${gId},${r.id},'color',this.value)">
+            <option value="">カラー区分</option>${r._productColors.map(c=>`<option value="${esc(c.v)}"${r.color===c.v?' selected':''}>${c.l}</option>`).join('')}
+          </select>`
+        :`<span id="fi-colortag-${r.id}" class="color-group-tag" style="${r.color?'':'display:none'}">${esc(r.color||'')}</span>`
+      }
+      <input id="fi-colordetail-${r.id}" class="mi mr-colordetail" type="text" placeholder="カラー（例：レッド）" value="${esc(r.colorDetail||'')}" oninput="uMatRow(${gId},${r.id},'colorDetail',this.value)">
       <select class="ms mr-size" onchange="uMatRow(${gId},${r.id},'size',this.value)">${sizeOpts}</select>
       ${isOtherSize?`<input id="fi-szcustom-${r.id}" class="mi mr-szcustom" type="text" placeholder="サイズ" value="${esc(r.sizeCustom||'')}" oninput="uMatRow(${gId},${r.id},'sizeCustom',this.value)">`:``}
     </div>
@@ -1047,12 +1290,54 @@ function delMatGroup(id){
   if(g.rows.some(r=>r.qty||r.code)){customConfirm(`「${getMatGrpLabel(g)}」を削除しますか？`,()=>{matGroups=matGroups.filter(g=>g.id!==id);renderMatGroups();updateTotals();});return;}
   matGroups=matGroups.filter(g=>g.id!==id);renderMatGroups();updateTotals();
 }
+/** 未入力行の警告チェック（行追加・複製前に呼ぶ）
+ * @returns {boolean} true=問題なし, false=未入力あり（ブロック）
+ */
+function warnIncompleteRows(g){
+  const missing=[];
+  const warnEls=[];
+  g.rows.forEach((r,i)=>{
+    // 品番未入力の完全空行はスキップ（初期状態でブロックしない）
+    if(!r.code) return;
+    const parts=[];
+    if(!r.size){
+      parts.push('サイズ');
+      const el=document.querySelector(`#mrow-${r.id} .mr-size`);
+      if(el) warnEls.push(el);
+    }
+    if(r._productColors&&!r.color){
+      parts.push('カラー区分');
+      const el=document.getElementById('fi-colorcat-'+r.id);
+      if(el) warnEls.push(el);
+    }
+    if(!r.qty){
+      parts.push('枚数');
+      const el=document.getElementById('fi-qty-'+r.id);
+      if(el) warnEls.push(el);
+    }
+    if(parts.length>0) missing.push(`${i+1}行目: ${parts.join('・')}が未入力`);
+  });
+  if(missing.length>0){
+    showToast('⚠ '+missing[0], 4000);
+    // 未入力フィールドをオレンジ枠で点滅ハイライト
+    warnEls.forEach(el=>{
+      el.classList.remove('field-warn');
+      void el.offsetWidth;
+      el.classList.add('field-warn');
+      setTimeout(()=>el.classList.remove('field-warn'),2500);
+    });
+    return false; // 未入力あり → ブロック
+  }
+  return true; // 問題なし
+}
+
 function dupMatRow(gId,rId){
   const g=matGroups.find(g=>g.id===gId);if(!g)return;
   const r=g.rows.find(r=>r.id===rId);if(!r)return;
+  if(!warnIncompleteRows(g)) return; // 未入力ブロック
   const idx=g.rows.indexOf(r);
   // 品番・メーカー・商品名・詳細カラー・割引率を維持、サイズ・上代・枚数・カラータグをリセット
-  const dup={...r, id:++mid, size:'', sizeCustom:'', retail:0, qty:0, color:''};
+  const dup={...r, id:++mid, size:'', sizeCustom:'', retail:0, qty:0};
   g.rows.splice(idx+1,0,dup);
   const container=document.getElementById(`mr-${gId}`);
   if(container){
@@ -1073,6 +1358,7 @@ function uMatGrpName(id,val){
 function uMatGrpCustom(id,val){const g=matGroups.find(g=>g.id===id);if(g)g.customName=val;updateTotals();}
 function addMatRow(gId){
   const g=matGroups.find(g=>g.id===gId);if(!g)return;
+  if(!warnIncompleteRows(g)) return; // 未入力ブロック
   g.rows.push(newMatRow());
   document.getElementById(`mr-${gId}`).innerHTML=g.rows.map(r=>renderMatRow(gId,r)).join('');
   refreshMatGrpHeader(gId);updateTotals();
@@ -1111,15 +1397,29 @@ function uMatRow(gId,rId,key,val){
   if(key==='code'){
     const hasDB=!!PRICE_DB[r.maker]; // UA/TOMS/TRのみtrue
     if(hasDB){
+      const hadColorSelect=!!r._productColors; // カラー区分セレクトがあったか記録
       r.prodName=''; r.retail=0; r.color=''; r.colorDetail='';
-      const nameEl=document.getElementById('fi-prodname-'+rId);
-      if(nameEl){nameEl.textContent='';nameEl.style.display='none';}
-      const tagEl=document.getElementById('fi-colortag-'+rId);
-      if(tagEl){tagEl.textContent='';tagEl.style.display='none';}
-      const detailEl=document.getElementById('fi-colordetail-'+rId);
-      if(detailEl) detailEl.value='';
-      const retEl=document.getElementById('fi-retail-'+rId);
-      if(retEl) retEl.value='';
+      r._productSizes=null; // 品番連動サイズもクリア
+      r._productColors=null; // 品番連動カラーもクリア
+      r._productConfirmed=false; // 品番確認フラグもクリア
+      // カラー区分セレクトがあった場合は行全体を再描画（セレクト除去のため）
+      if(hadColorSelect){
+        withFocusRestore(()=>{
+          const el=document.getElementById(`mrow-${rId}`);
+          if(el){const t=document.createElement('div');t.innerHTML=renderMatRow(gId,r);el.replaceWith(t.firstElementChild);}
+        });
+      } else {
+        const nameEl=document.getElementById('fi-prodname-'+rId);
+        if(nameEl){nameEl.textContent='';nameEl.style.display='none';}
+        const tagEl=document.getElementById('fi-colortag-'+rId);
+        if(tagEl){tagEl.textContent='';tagEl.style.display='none';}
+        const detailEl=document.getElementById('fi-colordetail-'+rId);
+        if(detailEl) detailEl.value='';
+        const retEl=document.getElementById('fi-retail-'+rId);
+        if(retEl) retEl.value='';
+        // サイズドロップダウンをメーカー共通に戻す
+        refreshSizeSelect(gId, r);
+      }
       // 計算結果とグループヘッダーも更新
       updateResCell(r);
       refreshMatGrpHeader(gId);
@@ -1202,22 +1502,34 @@ function uMatRow(gId,rId,key,val){
   } else if(key==='disc'||key==='size'||key==='maker'||key==='color'){
     // メーカー変更時：新しいメーカーのサイズリストに現サイズがなければリセット
     if(key==='maker'){
+      r._productSizes=null; // 品番連動サイズクリア
+      r._productColors=null; // 品番連動カラーもクリア
+      r._productConfirmed=false;
+      r.code=''; r.prodName=''; r.color=''; r.colorDetail=''; // 品番・商品名・カラーリセット
       const newSizes=getSizesForMaker(val);
-      if(!newSizes.find(s=>s.v===r.size))r.size=newSizes[0]?.v||'S';
+      if(r.size && !newSizes.find(s=>s.v===r.size))r.size='';
       r.sizeCustom='';
       r.disc=getDefaultDisc(val);
       r.retail=''; // メーカー変更時は上代リセット
     }
-    // サイズ・カラー変更時：価格DBから自動で上代を更新
+    // サイズ・カラー区分変更時：価格DBから自動で上代を更新
     if(key==='size'||key==='color'){
-      const newRetail=autoLookupRetail(r);
-      if(newRetail!==null){
-        r.retail=newRetail;
+      applyAutoRetail(r, rId);
+    }
+    // カラー区分変更時：詳細カラー欄を連動更新
+    if(key==='color'&&val){
+      const genericColors=['カラー','ホワイト・カラー','ホワイト・カラー・蛍光カラー','配色','ミックスカラー','ストライプ柄・ウッドランド柄','ブラック・ネイビー'];
+      if(!genericColors.includes(val)){
+        r.colorDetail=val; // 具体的な区分名 → 自動入力
+      } else {
+        r.colorDetail=''; // 汎用区分名 → クリア（手入力待ち）
       }
     }
     const el=document.getElementById(`mrow-${rId}`);
     if(el){const t=document.createElement('div');t.innerHTML=renderMatRow(gId,r);el.replaceWith(t.firstElementChild);}
     refreshMatGrpHeader(gId);
+  } else if(key==='colorDetail'){
+    // カラー名記録のみ（価格はカラー区分セレクトで制御）→ DOM再生成なし
   } else if(key==='sizeCustom'){
     // テキスト入力のみ → DOM再生成なし
   }
@@ -1236,13 +1548,15 @@ function refreshMatGrpHeader(gId){
 /* 同一グループ内のサイズ＋カラー重複チェック */
 function checkDupWarnings(gId){
   const g=matGroups.find(g=>g.id===gId);if(!g)return;
-  // キー→行IDリストのマップを作成
+  // キー→行IDリストのマップを作成（サイズ＋詳細カラーで判定）
   const map={};
   g.rows.forEach(r=>{
     const sz=r.size||'';
     const cl=r.colorDetail||'';
-    // サイズ・カラーどちらかが空なら判定しない（入力途中）
-    if(!sz||!cl) return;
+    // サイズが空なら判定しない（入力途中）
+    if(!sz) return;
+    // 詳細カラーも空なら判定しない
+    if(!cl) return;
     const key=sz+'|||'+cl;
     if(!map[key])map[key]=[];
     map[key].push(r.id);
@@ -1252,16 +1566,40 @@ function checkDupWarnings(gId){
   Object.values(map).forEach(ids=>{
     if(ids.length>=2) ids.forEach(id=>dupIds.add(id));
   });
-  // 各行の警告spanを更新
+  // 各行の警告spanを更新（重複 + カラー矛盾）
   g.rows.forEach(r=>{
     const el=document.getElementById('fi-dup-'+r.id);
     if(!el)return;
-    if(dupIds.has(r.id)){
-      el.textContent='⚠ 同じサイズ・カラーの行があります';
-    } else {
-      el.textContent='';
+    const warnings=[];
+    if(dupIds.has(r.id)) warnings.push('⚠ 同じサイズ・カラーの行があります');
+    // カラー区分と詳細カラーの矛盾チェック
+    if(r.color && r.colorDetail && r._productColors){
+      const mismatch=checkColorMismatch(r.color, r.colorDetail);
+      if(mismatch) warnings.push(mismatch);
     }
+    el.textContent=warnings.join('　');
   });
+}
+
+/** カラー区分と詳細カラー入力の矛盾をチェック */
+function checkColorMismatch(category, detail){
+  if(!category||!detail) return null;
+  const d=detail.toLowerCase();
+  // 詳細カラーが示唆する区分を推定
+  const isWhite=detail.includes('ホワイト')||d==='white';
+  const isAsh=detail.includes('アッシュ');
+  const isHeather=detail.includes('ヘザー');
+  const isWoodland=detail.includes('ウッドランド');
+  const isNatural=detail.includes('ナチュラル');
+  const isDenim=detail.includes('デニム');
+  // 区分側がそのキーワードを含んでいれば矛盾なし
+  if(isWhite && !category.includes('ホワイト')) return '⚠ 「ホワイト」はカラー区分が異なる可能性があります';
+  if(isAsh && !category.includes('アッシュ')) return '⚠ 「アッシュ」はカラー区分が異なる可能性があります';
+  if(isHeather && !category.includes('ヘザー')) return '⚠ 「ヘザー」はカラー区分が異なる可能性があります';
+  if(isWoodland && !category.includes('ウッドランド')) return '⚠ 「ウッドランド」はカラー区分が異なる可能性があります';
+  if(isNatural && !category.includes('ナチュラル')) return '⚠ 「ナチュラル」はカラー区分が異なる可能性があります';
+  if(isDenim && !category.includes('デニム')) return '⚠ 「デニム」はカラー区分が異なる可能性があります';
+  return null;
 }
 function checkAllDupWarnings(){
   matGroups.forEach(g=>checkDupWarnings(g.id));
@@ -2191,6 +2529,10 @@ function resetAll(){
   customConfirm('全データをリセットしますか？',()=>{
     matGroups=[];procGroups=[];goodsGroups=[];optState={};extraOptState={baggingMode:'all70',baggingQty70:0,baggingQty10:0};mgid=0;mid=0;pgid=0;plid=0;ggid=0;
     ['mClient','mNote'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('mDate').value='';
+    // 空グループを1つずつ追加（初期表示と同じ状態）
+    matGroups.push(newMatGroup());
+    procGroups.push(newProcGroup());
     renderMatGroups();renderProcGroups();renderOptions();renderExtraOpts();renderGoodsGroups();updateTotals();
   });
 }
