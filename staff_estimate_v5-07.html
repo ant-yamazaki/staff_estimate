@@ -814,7 +814,8 @@ const RUBBER_F={1:{25:2100,100:3000,315:3500,630:3900,935:4200,1260:4680,1824:68
 ================================================================ */
 function getUP(tbl,qty,sz){const bs=[200,150,100,50,30,20,10,2,1];for(const b of bs){if(qty>=b&&tbl[b]&&tbl[b][sz]!==undefined)return tbl[b][sz];}return 0;}
 function getScreenUP(qty,col){const bs=[200,150,100,50,30,20,10];for(const b of bs){if(qty>=b)return(SCREEN_PRICE[b]&&SCREEN_PRICE[b][col])||0;}return 0;}
-function calcProcLine(method,line,qty){
+function calcProcLine(method,line,qty,rateQty){
+  const rq=rateQty||qty; // 単価決定用の枚数（共通合算時はrateQty、通常はqty）
   if(method==='manual') return{cost:line.manualPrice||0,err:null};
   if(method==='embroidery'){
     if(!line.embType) return{cost:0,err:'品目未選択'};
@@ -828,15 +829,15 @@ function calcProcLine(method,line,qty){
   if(qty<=0) return{cost:0,err:'枚数0'};
   if(method==='screen'){
     const col=line.colors||1;
-    if(qty>=6&&qty<=9) return{cost:0,err:'6〜9枚不可'};
-    if(qty<=5){const up=(SCREEN_SAMPLE[qty]&&SCREEN_SAMPLE[qty][col])||0;const c=up*qty;return{cost:c,err:c?null:'価格なし'};}
-    const c=getScreenUP(qty,col)*qty;
+    if(rq>=6&&rq<=9) return{cost:0,err:'6〜9枚不可'};
+    if(rq<=5){const up=(SCREEN_SAMPLE[rq]&&SCREEN_SAMPLE[rq][col])||0;const c=up*qty;return{cost:c,err:c?null:'価格なし'};}
+    const c=getScreenUP(rq,col)*qty;
     return{cost:c,err:c?null:'価格なし'};
   }
   const tbl={garment_light:GARMENT_L,garment_dark:GARMENT_D,dtf:DTF,rubber:RUBBER,rubber_full:RUBBER_F}[method];
   if(!tbl) return{cost:0,err:'未選択'};
   const sz=line.size||0;if(!sz)return{cost:0,err:'サイズ未選択'};
-  const c=getUP(tbl,qty,sz)*qty;
+  const c=getUP(tbl,rq,sz)*qty;
   return{cost:c,err:c?null:'価格なし'};
 }
 
@@ -1173,7 +1174,7 @@ function getMatGrpLabel(g){return g.name==='その他（自由入力）'?(g.cust
 
 // 加工
 function defaultProcLine(method){
-  const line={id:++plid,labelPreset:'',labelCustom:'',manualPrice:0,qtyMode:'auto',qtyManual:0};
+  const line={id:++plid,labelPreset:'',labelCustom:'',manualPrice:0,qtyMode:'auto',qtyManual:0,sharedPlate:false};
   if(method==='screen') line.colors=1;
   else if(method==='embroidery'){ line.embType='emb_normal'; line.stitchCount=0; }
   else if(method!=='manual') line.size=315;
@@ -1181,8 +1182,20 @@ function defaultProcLine(method){
 }
 function newProcGroup(){return{id:++pgid,method:'',dataFee:0,lines:[defaultProcLine('')]};}
 function getProcLineQty(line){return line.qtyMode==='manual'?(line.qtyManual||0):getTotalQty();}
+function getSharedRateQty(g, line){
+  const qty = getProcLineQty(line);
+  if(!line.sharedPlate) return qty;
+  // 共通フラグの行の枚数を合算
+  const total = g.lines.filter(l=>l.sharedPlate).reduce((s,l)=>s+getProcLineQty(l),0);
+  return total;
+}
 function calcProcGroupTotal(g){
-  let total=g.lines.reduce((s,l)=>{const{cost}=calcProcLine(g.method,l,getProcLineQty(l));return s+(cost||0);},0);
+  let total=g.lines.reduce((s,l)=>{
+    const qty=getProcLineQty(l);
+    const rateQty=getSharedRateQty(g,l);
+    const{cost}=calcProcLine(g.method,l,qty,rateQty);
+    return s+(cost||0);
+  },0);
   if(g.method==='embroidery') total+=(g.dataFee||0);
   return total;
 }
@@ -1474,7 +1487,8 @@ function uMatRow(gId,rId,key,val){
         if(l.qtyMode!=='auto')return;
         const qv=document.getElementById(`pqv-${l.id}`);
         if(qv)qv.textContent=newTot+'枚';
-        const{cost,err}=calcProcLine(g.method,l,newTot);
+        const rateQty2=getSharedRateQty(g,l);
+        const{cost,err}=calcProcLine(g.method,l,newTot,rateQty2);
         const unitStr=newTot>0&&cost>0?`@ ¥${Math.round(cost/newTot).toLocaleString()}`:'';
         const isScreen=g.method==='screen';
         const isEmb=g.method==='embroidery';
@@ -1486,9 +1500,10 @@ function uMatRow(gId,rId,key,val){
         const embTypeLabel=isEmb?(EMB_TYPES.find(e=>e.v===l.embType)||{l:''}).l:'';
         const stitchLabel=isEmb&&l.stitchCount?`${l.stitchCount}針`:'';
         const discLabel=isEmb&&newTot>=50?'（2割引）':isEmb&&newTot>=20?'（1割引）':'';
+        const sharedLabel2=l.sharedPlate?'共通':'';
         const detailParts=isEmb
-          ?[getMethodLabel(g.method),embTypeLabel,locLabel,stitchLabel,discLabel].filter(Boolean)
-          :[getMethodLabel(g.method),locLabel,colorsLabel,sizeLabel].filter(Boolean);
+          ?[getMethodLabel(g.method),embTypeLabel,locLabel,stitchLabel,discLabel,sharedLabel2].filter(Boolean)
+          :[getMethodLabel(g.method),locLabel,colorsLabel,sizeLabel,sharedLabel2].filter(Boolean);
         const detailStr=detailParts.join('・')+(unitStr?'　'+unitStr:'');
         const pres=document.getElementById(`fi-pres-${l.id}`);
         const punit=document.getElementById(`fi-punit-${l.id}`);
@@ -1684,7 +1699,8 @@ function renderProcGroup(g,idx){
 }
 function renderProcLine(g,l){
   const qty=getProcLineQty(l);
-  const{cost,err}=calcProcLine(g.method,l,qty);
+  const rateQty=getSharedRateQty(g,l);
+  const{cost,err}=calcProcLine(g.method,l,qty,rateQty);
   const isManual=g.method==='manual';
   const isScreen=g.method==='screen';
   const isEmb=g.method==='embroidery';
@@ -1751,9 +1767,10 @@ function renderProcLine(g,l){
   const embTypeLabel=isEmb?(EMB_TYPES.find(e=>e.v===l.embType)||{l:''}).l:'';
   const stitchLabel=isEmb&&l.stitchCount?`${l.stitchCount}針`:'';
   const discLabel=isEmb&&qty>=50?'（2割引）':isEmb&&qty>=20?'（1割引）':'';
+  const sharedLabel=l.sharedPlate?'共通':'';
   const detailParts=isEmb
-    ?[methodLabel,embTypeLabel,locLabel,stitchLabel,discLabel].filter(Boolean)
-    :[methodLabel,locLabel,colorsLabel,sizeLabel].filter(Boolean);
+    ?[methodLabel,embTypeLabel,locLabel,stitchLabel,discLabel,sharedLabel].filter(Boolean)
+    :[methodLabel,locLabel,colorsLabel,sizeLabel,sharedLabel].filter(Boolean);
   const detailStr=detailParts.join('・')+(unitStr?'　'+unitStr:'');
 
   // カ所未選択で必要な場合、後続入力を隠す
@@ -1775,17 +1792,27 @@ function renderProcLine(g,l){
           value="${l.manualPrice||''}" oninput="uProcLine(${g.id},${l.id},'manualPrice',+this.value)">
         <span style="font-size:11px;color:var(--sub);white-space:nowrap">円</span>
       `:locPending?'':` 
-        <div style="display:flex;align-items:center;gap:5px;flex-shrink:0;">
+        <div style="display:flex;align-items:center;gap:5px;flex-shrink:0;flex-wrap:wrap;">
           <span style="font-size:11px;color:var(--sub);white-space:nowrap">枚数</span>
           <div class="qty-toggle">
             <button class="${l.qtyMode==='auto'?'on':''}" onclick="uProcLine(${g.id},${l.id},'qtyMode','auto')">合算</button>
-            <button class="${l.qtyMode==='manual'?'on':''}" onclick="uProcLine(${g.id},${l.id},'qtyMode','manual')">手動</button>
+            <button class="${l.qtyMode==='manual'&&!l.sharedPlate?'on':''}" onclick="uProcLine(${g.id},${l.id},'qtyMode','manual')">手動</button>
+            <button class="${l.sharedPlate?'on':''}" onclick="uProcLine(${g.id},${l.id},'qtyMode','shared')" title="前後や袖など同じデザインで刷る場合、枚数を合算した単価で計算します">共通</button>
           </div>
-          ${l.qtyMode==='auto'
+          ${l.qtyMode==='auto'&&!l.sharedPlate
             ?`<span class="qty-val" id="pqv-${l.id}">${autoQty}枚</span>`
-            :`<input id="fi-pqty-${l.id}" class="pl-num" style="width:66px" type="number" min="0" placeholder="0"
-                value="${l.qtyManual||''}" oninput="uProcLine(${g.id},${l.id},'qtyManual',+this.value)">
-              <span style="font-size:11px;color:var(--sub)">枚</span>`}
+            :l.sharedPlate
+              ?`<input id="fi-pqty-${l.id}" class="pl-num" style="width:66px" type="number" min="0" placeholder="0"
+                  value="${l.qtyManual||''}" oninput="uProcLine(${g.id},${l.id},'qtyManual',+this.value)">
+                <span style="font-size:11px;color:var(--sub)">枚</span>
+                ${rateQty>qty
+                  ?`<span style="font-size:10px;font-weight:700;color:var(--blue);white-space:nowrap;background:#eef3ff;padding:2px 6px;border-radius:4px;">共通計${rateQty}枚の単価</span>`
+                  :g.lines.filter(x=>x.sharedPlate).length<2
+                    ?`<span style="font-size:10px;color:#b0b8c4;white-space:nowrap;">※他のカ所も「共通」に</span>`
+                    :''}`
+              :`<input id="fi-pqty-${l.id}" class="pl-num" style="width:66px" type="number" min="0" placeholder="0"
+                  value="${l.qtyManual||''}" oninput="uProcLine(${g.id},${l.id},'qtyManual',+this.value)">
+                <span style="font-size:11px;color:var(--sub)">枚</span>`}
         </div>
       `}
       <div style="display:flex;gap:2px;flex-shrink:0;margin-left:auto;">
@@ -1856,7 +1883,17 @@ function dupProcLine(gId,lId){
 function uProcLine(gId,lId,key,val){
   const g=procGroups.find(g=>g.id===gId);if(!g)return;
   const l=g.lines.find(l=>l.id===lId);if(!l)return;
-  l[key]=val;
+
+  // 「共通」は qtyMode='manual' + sharedPlate=true に変換
+  if(key==='qtyMode'&&val==='shared'){
+    l.qtyMode='manual';
+    l.sharedPlate=true;
+  } else if(key==='qtyMode'){
+    l.qtyMode=val;
+    l.sharedPlate=false;
+  } else {
+    l[key]=val;
+  }
 
   if(key==='labelCustom'){
     // テキスト入力 → DOM再生成なし
@@ -1876,7 +1913,8 @@ function uProcLine(gId,lId,key,val){
   if(key==='manualPrice'||key==='qtyManual'||key==='stitchCount'){
     // 数値入力 → 結果表示だけ更新（DOM再生成なし）
     const qty=getProcLineQty(l);
-    const{cost,err}=calcProcLine(g.method,l,qty);
+    const rateQty3=getSharedRateQty(g,l);
+    const{cost,err}=calcProcLine(g.method,l,qty,rateQty3);
     const unitStr=cost>0&&qty>0?`@ ¥${Math.round(cost/qty).toLocaleString()}`:'';
     const isScreen=g.method==='screen';
     const isEmb=g.method==='embroidery';
@@ -1890,9 +1928,10 @@ function uProcLine(gId,lId,key,val){
     const embTypeLabel=isEmb?(EMB_TYPES.find(e=>e.v===l.embType)||{l:''}).l:'';
     const stitchLabel=isEmb&&l.stitchCount?`${l.stitchCount}針`:'';
     const discLabel=isEmb&&qty>=50?'（2割引）':isEmb&&qty>=20?'（1割引）':'';
+    const sharedLabel3=l.sharedPlate?'共通':'';
     const detailParts=isEmb
-      ?[getMethodLabel(g.method),embTypeLabel,locLabel,stitchLabel,discLabel].filter(Boolean)
-      :[getMethodLabel(g.method),locLabel,colorsLabel,sizeLabel].filter(Boolean);
+      ?[getMethodLabel(g.method),embTypeLabel,locLabel,stitchLabel,discLabel,sharedLabel3].filter(Boolean)
+      :[getMethodLabel(g.method),locLabel,colorsLabel,sizeLabel,sharedLabel3].filter(Boolean);
     const detailStr=detailParts.join('・')+(unitStr?'　'+unitStr:'');
     const res=document.getElementById(`fi-pres-${lId}`);
     const unitEl=document.getElementById(`fi-punit-${lId}`);
@@ -1900,15 +1939,53 @@ function uProcLine(gId,lId,key,val){
     if(unitEl)unitEl.textContent=detailStr;
     const lineEl=document.getElementById(`pl-${lId}`);
     if(lineEl){if(cost>0)lineEl.classList.add('has-val');else lineEl.classList.remove('has-val');}
+    // 共通行の枚数が変わったら、他の共通行の金額表示もインライン更新
+    if(key==='qtyManual'&&l.sharedPlate){
+      g.lines.forEach(ol=>{
+        if(ol.id===lId||!ol.sharedPlate) return;
+        const oQty=getProcLineQty(ol);
+        const oRate=getSharedRateQty(g,ol);
+        const{cost:oCost,err:oErr}=calcProcLine(g.method,ol,oQty,oRate);
+        const oUnit=oCost>0&&oQty>0?`@ ¥${Math.round(oCost/oQty).toLocaleString()}`:'';
+        const oIsScreen=g.method==='screen';const oIsEmb=g.method==='embroidery';
+        const oNeedSz=['garment_light','garment_dark','dtf','rubber','rubber_full'].includes(g.method);
+        const oSzOpts=(g.method==='garment_light'||g.method==='garment_dark')?SZ_G:SZ_D;
+        const oLoc=(ol.labelPreset==='その他（自由入力）'||ol.labelPreset==='自由入力')?(ol.labelCustom||''):ol.labelPreset||'';
+        const oCol=oIsScreen?`${ol.colors||1}色`:'';
+        const oSzL=oNeedSz?(oSzOpts.find(s=>s.v===ol.size)||{l:''}).l:'';
+        const oEmbL=oIsEmb?(EMB_TYPES.find(e=>e.v===ol.embType)||{l:''}).l:'';
+        const oStL=oIsEmb&&ol.stitchCount?`${ol.stitchCount}針`:'';
+        const oDL=oIsEmb&&oQty>=50?'（2割引）':oIsEmb&&oQty>=20?'（1割引）':'';
+        const oDP=oIsEmb?[getMethodLabel(g.method),oEmbL,oLoc,oStL,oDL,'共通'].filter(Boolean):[getMethodLabel(g.method),oLoc,oCol,oSzL,'共通'].filter(Boolean);
+        const oDS=oDP.join('・')+(oUnit?'　'+oUnit:'');
+        const oR=document.getElementById(`fi-pres-${ol.id}`);
+        const oU=document.getElementById(`fi-punit-${ol.id}`);
+        if(oR)oR.textContent=oCost>0?'¥'+oCost.toLocaleString():oErr&&oErr!=='枚数0'?'⚠ '+oErr:'—';
+        if(oU)oU.textContent=oDS;
+        const oLE=document.getElementById(`pl-${ol.id}`);
+        if(oLE){if(oCost>0)oLE.classList.add('has-val');else oLE.classList.remove('has-val');}
+      });
+    }
     refreshProcGrpHeader(gId);
     updateTotals();return;
   }
   // セレクト変更・モード切替など → 行再描画
-  withFocusRestore(()=>{
-    const el=document.getElementById(`pl-${lId}`);
-    if(el){const t=document.createElement('div');t.innerHTML=renderProcLine(g,l);el.replaceWith(t.firstElementChild);}
+  if(key==='sharedPlate'||key==='qtyMode'){
+    // 共通・枚数モード変更 → グループ全行を再描画（他の共通行の単価も変わるため）
+    document.getElementById(`plc-${gId}`).innerHTML=g.lines.map(l2=>renderProcLine(g,l2)).join('');
     refreshProcGrpHeader(gId);
-  });
+    // 手動・共通切替時は枚数入力欄にフォーカス
+    if(l.qtyMode==='manual'||l.sharedPlate){
+      const qtyEl=document.getElementById(`fi-pqty-${l.id}`);
+      if(qtyEl) qtyEl.focus();
+    }
+  } else {
+    withFocusRestore(()=>{
+      const el=document.getElementById(`pl-${lId}`);
+      if(el){const t=document.createElement('div');t.innerHTML=renderProcLine(g,l);el.replaceWith(t.firstElementChild);}
+      refreshProcGrpHeader(gId);
+    });
+  }
   updateTotals();
 }
 function refreshProcGrpHeader(gId){
@@ -2621,7 +2698,8 @@ function copyToClipboard(){
     }
     g.lines.forEach(l=>{
       const qty=getProcLineQty(l);
-      const{cost}=calcProcLine(g.method,l,qty);
+      const rateQty=getSharedRateQty(g,l);
+      const{cost}=calcProcLine(g.method,l,qty,rateQty);
       if(!cost)return;
       const locLabel=(l.labelPreset==='その他（自由入力）'||l.labelPreset==='自由入力')?(l.labelCustom||'その他'):l.labelPreset||'';
       const isScreen=g.method==='screen';
